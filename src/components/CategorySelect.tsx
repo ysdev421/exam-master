@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Sparkles, Library, ExternalLink, Timer, Bookmark } from 'lucide-react';
 import type { Category, LearningTag } from '../types';
-import { questionDatabase } from '../data/questions';
 import type { PastExamSet } from '../data/pastExams';
 import { pastExamQuestionDatabase } from '../data/pastExams';
 
@@ -22,21 +21,6 @@ interface Props {
   onExportData: () => void;
   onImportData: (file: File) => Promise<{ ok: boolean; message: string }>;
   onResetAllData: () => void;
-}
-
-function combination(n: number, r: number): number {
-  if (r > n || r < 0) return 0;
-  if (r === 0 || r === n) return 1;
-  const k = Math.min(r, n - r);
-  let result = 1;
-  for (let i = 1; i <= k; i += 1) result = (result * (n - k + i)) / i;
-  return result;
-}
-
-function estimateCategoryPatterns(totalQuestions: number): number {
-  const sessionSize = Math.min(6, totalQuestions);
-  if (sessionSize <= 0) return 0;
-  return Math.round(combination(totalQuestions, sessionSize));
 }
 
 function seasonLabel(season: PastExamSet['season']): string {
@@ -207,8 +191,6 @@ export default function CategorySelect({
         <h3 className="text-sm font-bold text-cyan-200 inline-flex items-center gap-2"><Sparkles size={14} /> カテゴリ演習</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {categories.map((cat) => {
-            const total = (questionDatabase[cat.id] ?? []).length;
-            const patterns = estimateCategoryPatterns(total);
             return (
               <button
                 key={cat.id}
@@ -217,10 +199,10 @@ export default function CategorySelect({
               >
                 <div className="flex justify-between mb-3">
                   <span className="text-2xl">{cat.icon}</span>
-                  <span className="chip">{total}問</span>
+                  <span className="chip">{cat.questions}問</span>
                 </div>
                 <h3 className="font-bold mb-1">{cat.name}</h3>
-                <p className="text-xs text-white/85">約{patterns.toLocaleString()}パターン</p>
+                <p className="text-xs text-white/85">収録問題数: {cat.questions}問</p>
               </button>
             );
           })}
@@ -271,6 +253,11 @@ export default function CategorySelect({
             );
           })}
         </div>
+        {shownSets.length === 0 && (
+          <div className="glass-card rounded-2xl p-5 border border-slate-500/35 text-sm text-slate-300">
+            条件に一致する過去問セットがありません。年度または「収録済みのみ」の絞り込みを変更してください。
+          </div>
+        )}
       </section>
     </div>
   );
