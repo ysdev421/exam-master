@@ -28,7 +28,7 @@ export default function App() {
           />
         )}
 
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-4 py-5 md:py-7">
           {quiz.currentView === 'home' && <HomeView onStart={() => quiz.setCurrentView('categories')} />}
 
           {quiz.currentView === 'categories' && (

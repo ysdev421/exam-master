@@ -1,4 +1,4 @@
-export type View = 'home' | 'categories' | 'quiz' | 'result';
+﻿export type View = 'home' | 'categories' | 'quiz' | 'result';
 
 export interface Question {
   id: number;
@@ -7,7 +7,6 @@ export interface Question {
   correct: number;
   explanation: string;
   hint?: string;
-  diagram?: string;
 }
 
 export interface Category {
