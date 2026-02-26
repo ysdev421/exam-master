@@ -43,11 +43,11 @@ export default function App() {
               categoryName={categories.find(c => c.id === quiz.selectedCategory)?.name ?? ''}
               selectedAnswer={quiz.selectedAnswer}
               answered={quiz.answered}
-              showDiagram={quiz.showDiagram}
+              showHint={quiz.showHint}
               patternId={quiz.patternId}
               onAnswer={quiz.handleAnswerClick}
               onNext={quiz.handleNextQuestion}
-              onToggleDiagram={() => quiz.setShowDiagram(!quiz.showDiagram)}
+              onToggleHint={() => quiz.setShowHint(!quiz.showHint)}
             />
           )}
 

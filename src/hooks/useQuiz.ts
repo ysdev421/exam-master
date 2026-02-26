@@ -13,6 +13,7 @@ const INITIAL_DATA: SavedData = {
 };
 
 const QUESTIONS_PER_SESSION = 6;
+const MAX_RECENT_PATTERNS = 8;
 
 function shuffle<T>(items: T[]): T[] {
   const arr = [...items];
@@ -29,6 +30,21 @@ function makePatternId(categoryId: string): string {
   return `${categoryId.slice(0, 3).toUpperCase()}-${now}-${seed}`;
 }
 
+function shuffleAnswers(question: Question): Question {
+  const indexed = question.answers.map((text, index) => ({ text, index }));
+  const shuffled = shuffle(indexed);
+  const nextCorrect = shuffled.findIndex(item => item.index === question.correct);
+  return {
+    ...question,
+    answers: shuffled.map(item => item.text),
+    correct: nextCorrect,
+  };
+}
+
+function getPatternSignature(questions: Question[]): string {
+  return questions.map(q => `${q.id}:${q.correct}`).join('|');
+}
+
 export function useQuiz() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [score, setScore] = useState(0);
@@ -37,10 +53,11 @@ export function useQuiz() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [showDiagram, setShowDiagram] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [sessionCorrect, setSessionCorrect] = useState(0);
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
   const [patternId, setPatternId] = useState('');
+  const [recentPatternsByCategory, setRecentPatternsByCategory] = useState<Record<string, string[]>>({});
 
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
@@ -80,7 +97,7 @@ export function useQuiz() {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedAnswer(null);
       setAnswered(false);
-      setShowDiagram(false);
+      setShowHint(false);
     } else {
       setSavedData(prev => ({
         ...prev,
@@ -101,11 +118,28 @@ export function useQuiz() {
 
   const startSession = (categoryId: string) => {
     const pool = questionDatabase[categoryId] ?? [];
-    const picked = shuffle(pool).slice(0, QUESTIONS_PER_SESSION);
+    if (pool.length === 0) return;
+
+    const recent = recentPatternsByCategory[categoryId] ?? [];
+    let picked: Question[] = [];
+    let signature = '';
+    let attempts = 0;
+
+    do {
+      picked = shuffle(pool)
+        .slice(0, QUESTIONS_PER_SESSION)
+        .map(question => shuffleAnswers(question));
+      signature = getPatternSignature(picked);
+      attempts += 1;
+    } while (recent.includes(signature) && attempts < 20);
 
     setSelectedCategory(categoryId);
     setSessionQuestions(picked);
     setPatternId(makePatternId(categoryId));
+    setRecentPatternsByCategory(prev => {
+      const next = [signature, ...(prev[categoryId] ?? []).filter(item => item !== signature)].slice(0, MAX_RECENT_PATTERNS);
+      return { ...prev, [categoryId]: next };
+    });
     setCurrentView('quiz');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
@@ -113,7 +147,7 @@ export function useQuiz() {
     setScore(0);
     setStreak(0);
     setSessionCorrect(0);
-    setShowDiagram(false);
+    setShowHint(false);
   };
 
   const handleStartCategory = (categoryId: string) => {
@@ -134,7 +168,7 @@ export function useQuiz() {
     setStreak(0);
     setSessionCorrect(0);
     setSelectedCategory(null);
-    setShowDiagram(false);
+    setShowHint(false);
     setSessionQuestions([]);
     setPatternId('');
   };
@@ -155,8 +189,8 @@ export function useQuiz() {
     selectedAnswer,
     answered,
     selectedCategory,
-    showDiagram,
-    setShowDiagram,
+    showHint,
+    setShowHint,
     savedData,
     level,
     currentQuestions,

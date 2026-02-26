@@ -6,6 +6,7 @@ export interface Question {
   answers: string[];
   correct: number;
   explanation: string;
+  hint?: string;
   diagram?: string;
 }
 
