@@ -1,5 +1,13 @@
 ﻿export type View = 'home' | 'categories' | 'quiz' | 'result';
 
+export interface QuestionSource {
+  setId: string;
+  label: string;
+  year: number;
+  questionNo: string;
+  url?: string;
+}
+
 export interface Question {
   id: number;
   question: string;
@@ -7,6 +15,7 @@ export interface Question {
   correct: number;
   explanation: string;
   hint?: string;
+  source?: QuestionSource;
 }
 
 export interface Category {

@@ -1,5 +1,6 @@
 ﻿import { useQuiz } from './hooks/useQuiz';
 import { categories } from './data/categories';
+import { pastExamSets } from './data/pastExams';
 import Header from './components/Header';
 import HomeView from './components/HomeView';
 import CategorySelect from './components/CategorySelect';
@@ -8,6 +9,7 @@ import ResultScreen from './components/ResultScreen';
 
 export default function App() {
   const quiz = useQuiz();
+  const quizTitle = quiz.selectedPastExamSetLabel ?? categories.find(c => c.id === quiz.selectedCategory)?.name ?? '';
 
   return (
     <div className="min-h-screen bg-ink text-slate-100 overflow-x-hidden">
@@ -32,7 +34,12 @@ export default function App() {
           {quiz.currentView === 'home' && <HomeView onStart={() => quiz.setCurrentView('categories')} />}
 
           {quiz.currentView === 'categories' && (
-            <CategorySelect categories={categories} onSelectCategory={quiz.handleStartCategory} />
+            <CategorySelect
+              categories={categories}
+              pastExamSets={pastExamSets}
+              onSelectCategory={quiz.handleStartCategory}
+              onSelectPastExam={quiz.handleStartPastExam}
+            />
           )}
 
           {quiz.currentView === 'quiz' && quiz.currentQuestion && (
@@ -40,7 +47,7 @@ export default function App() {
               currentQuestion={quiz.currentQuestion}
               currentQuestionIndex={quiz.currentQuestionIndex}
               totalQuestions={quiz.currentQuestions.length}
-              categoryName={categories.find(c => c.id === quiz.selectedCategory)?.name ?? ''}
+              categoryName={quizTitle}
               selectedAnswer={quiz.selectedAnswer}
               answered={quiz.answered}
               showHint={quiz.showHint}

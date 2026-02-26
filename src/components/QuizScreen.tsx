@@ -49,6 +49,11 @@ export default function QuizScreen({
         <section className="rounded-2xl border border-cyan-300/25 bg-cyan-300/5 p-6">
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-200/85 mb-3">Question</p>
           <h2 className="text-lg md:text-2xl leading-relaxed font-bold">{currentQuestion.question}</h2>
+          {currentQuestion.source && (
+            <p className="mt-3 text-xs text-slate-300">
+              出典: {currentQuestion.source.label} {currentQuestion.source.questionNo}
+            </p>
+          )}
         </section>
 
         <div className="space-y-3">

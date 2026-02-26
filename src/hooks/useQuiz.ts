@@ -1,5 +1,6 @@
 ﻿import { useMemo, useState } from 'react';
 import { questionDatabase } from '../data/questions';
+import { pastExamQuestionDatabase, pastExamSets } from '../data/pastExams';
 import { useLocalStorage } from './useLocalStorage';
 import type { View, SavedData, Question } from '../types';
 
@@ -26,21 +27,17 @@ function shuffle<T>(items: T[]): T[] {
   return arr;
 }
 
-function makePatternId(categoryId: string): string {
+function makePatternId(scopeId: string): string {
   const now = Date.now().toString(36).toUpperCase();
   const seed = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `${categoryId.slice(0, 3).toUpperCase()}-${now}-${seed}`;
+  return `${scopeId.slice(0, 3).toUpperCase()}-${now}-${seed}`;
 }
 
 function shuffleAnswers(question: Question): Question {
   const indexed = question.answers.map((text, index) => ({ text, index }));
   const shuffled = shuffle(indexed);
   const nextCorrect = shuffled.findIndex(item => item.index === question.correct);
-  return {
-    ...question,
-    answers: shuffled.map(item => item.text),
-    correct: nextCorrect,
-  };
+  return { ...question, answers: shuffled.map(item => item.text), correct: nextCorrect };
 }
 
 function getPatternSignature(questions: Question[]): string {
@@ -56,25 +53,21 @@ export function useQuiz() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedPastExamSet, setSelectedPastExamSet] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [sessionCorrect, setSessionCorrect] = useState(0);
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
   const [patternId, setPatternId] = useState('');
-  const [recentPatternsByCategory, setRecentPatternsByCategory] = useLocalStorage<Record<string, string[]>>(
-    PATTERN_STORAGE_KEY,
-    {},
-  );
-  const [recentFirstQuestionByCategory, setRecentFirstQuestionByCategory] = useLocalStorage<Record<string, number>>(
-    FIRST_QUESTION_STORAGE_KEY,
-    {},
-  );
-
+  const [recentPatternsByCategory, setRecentPatternsByCategory] = useLocalStorage<Record<string, string[]>>(PATTERN_STORAGE_KEY, {});
+  const [recentFirstQuestionByCategory, setRecentFirstQuestionByCategory] = useLocalStorage<Record<string, number>>(FIRST_QUESTION_STORAGE_KEY, {});
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
   const level = Math.floor(savedData.totalScore / 50) + 1;
-
   const currentQuestions = sessionQuestions;
   const currentQuestion = currentQuestions[currentQuestionIndex] ?? null;
+  const selectedPastExamSetLabel = selectedPastExamSet
+    ? (pastExamSets.find(s => s.id === selectedPastExamSet)?.label ?? selectedPastExamSet)
+    : null;
 
   const handleAnswerClick = (index: number) => {
     if (answered || !currentQuestion) return;
@@ -87,18 +80,10 @@ export function useQuiz() {
       setScore(prev => prev + points);
       setStreak(prev => prev + 1);
       setSessionCorrect(prev => prev + 1);
-      setSavedData(prev => ({
-        ...prev,
-        totalScore: prev.totalScore + points,
-        totalAnswered: prev.totalAnswered + 1,
-        totalCorrect: prev.totalCorrect + 1,
-      }));
+      setSavedData(prev => ({ ...prev, totalScore: prev.totalScore + points, totalAnswered: prev.totalAnswered + 1, totalCorrect: prev.totalCorrect + 1 }));
     } else {
       setStreak(0);
-      setSavedData(prev => ({
-        ...prev,
-        totalAnswered: prev.totalAnswered + 1,
-      }));
+      setSavedData(prev => ({ ...prev, totalAnswered: prev.totalAnswered + 1 }));
     }
   };
 
@@ -111,56 +96,34 @@ export function useQuiz() {
     } else {
       setSavedData(prev => ({
         ...prev,
-        history: [
-          {
-            date: new Date().toISOString(),
-            category: selectedCategory ?? '',
-            score,
-            correct: sessionCorrect,
-            total: currentQuestions.length,
-          },
-          ...prev.history,
-        ].slice(0, 20),
+        history: [{ date: new Date().toISOString(), category: selectedPastExamSet ? `past:${selectedPastExamSet}` : (selectedCategory ?? ''), score, correct: sessionCorrect, total: currentQuestions.length }, ...prev.history].slice(0, 20),
       }));
       setCurrentView('result');
     }
   };
 
-  const startSession = (categoryId: string) => {
-    const pool = questionDatabase[categoryId] ?? [];
+  const startWithPool = (scopeId: string, pool: Question[], isPastExam: boolean) => {
     if (pool.length === 0) return;
 
-    const recent = recentPatternsByCategory[categoryId] ?? [];
+    const recent = recentPatternsByCategory[scopeId] ?? [];
+    const previousFirstId = recentFirstQuestionByCategory[scopeId] ?? null;
     let picked: Question[] = [];
     let signature = '';
     let attempts = 0;
 
-    const previousFirstId = recentFirstQuestionByCategory[categoryId] ?? null;
-
     do {
-      picked = shuffle(pool)
-        .slice(0, QUESTIONS_PER_SESSION)
-        .map(question => shuffleAnswers(question));
+      picked = shuffle(pool).slice(0, Math.min(QUESTIONS_PER_SESSION, pool.length)).map(shuffleAnswers);
       signature = getPatternSignature(picked);
       attempts += 1;
-    } while (
-      attempts < 40 &&
-      (
-        recent.includes(signature) ||
-        (previousFirstId !== null && picked[0]?.id === previousFirstId)
-      )
-    );
+    } while (attempts < 40 && (recent.includes(signature) || (previousFirstId !== null && picked[0]?.id === previousFirstId)));
 
-    setSelectedCategory(categoryId);
+    setSelectedPastExamSet(isPastExam ? scopeId : null);
+    setSelectedCategory(isPastExam ? null : scopeId);
     setSessionQuestions(picked);
-    setPatternId(makePatternId(categoryId));
-    setRecentPatternsByCategory(prev => {
-      const next = [signature, ...(prev[categoryId] ?? []).filter(item => item !== signature)].slice(0, MAX_RECENT_PATTERNS);
-      return { ...prev, [categoryId]: next };
-    });
-    if (picked[0]) {
-      setRecentFirstQuestionByCategory(prev => ({ ...prev, [categoryId]: picked[0].id }));
-    }
+    setPatternId(makePatternId(scopeId));
+    setRecentPatternsByCategory(prev => ({ ...prev, [scopeId]: [signature, ...(prev[scopeId] ?? []).filter(item => item !== signature)].slice(0, MAX_RECENT_PATTERNS) }));
+    if (picked[0]) setRecentFirstQuestionByCategory(prev => ({ ...prev, [scopeId]: picked[0].id }));
+
     setCurrentView('quiz');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
@@ -172,12 +135,19 @@ export function useQuiz() {
   };
 
   const handleStartCategory = (categoryId: string) => {
-    startSession(categoryId);
+    startWithPool(categoryId, questionDatabase[categoryId] ?? [], false);
+  };
+
+  const handleStartPastExam = (setId: string) => {
+    startWithPool(setId, pastExamQuestionDatabase[setId] ?? [], true);
   };
 
   const handleRetry = () => {
-    if (!selectedCategory) return;
-    startSession(selectedCategory);
+    if (selectedPastExamSet) {
+      handleStartPastExam(selectedPastExamSet);
+      return;
+    }
+    if (selectedCategory) handleStartCategory(selectedCategory);
   };
 
   const handleReset = () => {
@@ -189,15 +159,13 @@ export function useQuiz() {
     setStreak(0);
     setSessionCorrect(0);
     setSelectedCategory(null);
+    setSelectedPastExamSet(null);
     setShowHint(false);
     setSessionQuestions([]);
     setPatternId('');
   };
 
-  const sessionAccuracy = useMemo(
-    () => (currentQuestions.length > 0 ? Math.round((sessionCorrect / currentQuestions.length) * 100) : 0),
-    [currentQuestions.length, sessionCorrect],
-  );
+  const sessionAccuracy = useMemo(() => (currentQuestions.length > 0 ? Math.round((sessionCorrect / currentQuestions.length) * 100) : 0), [currentQuestions.length, sessionCorrect]);
 
   return {
     currentView,
@@ -210,6 +178,8 @@ export function useQuiz() {
     selectedAnswer,
     answered,
     selectedCategory,
+    selectedPastExamSet,
+    selectedPastExamSetLabel,
     showHint,
     setShowHint,
     savedData,
@@ -220,6 +190,7 @@ export function useQuiz() {
     handleAnswerClick,
     handleNextQuestion,
     handleStartCategory,
+    handleStartPastExam,
     handleRetry,
     handleReset,
   };
