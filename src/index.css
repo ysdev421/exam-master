@@ -7,17 +7,17 @@
 
 body {
   min-height: 100vh;
-  background: #070c14;
-  color: #e6edf7;
+  background: #101010;
+  color: #f3f3f1;
   font-family: 'Space Grotesk', 'Noto Sans JP', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 .bg-ink {
   background:
-    radial-gradient(900px 520px at 8% 0%, rgba(56, 189, 248, 0.18), transparent 60%),
-    radial-gradient(800px 480px at 92% 100%, rgba(20, 184, 166, 0.16), transparent 62%),
-    #070c14;
+    radial-gradient(900px 520px at 8% 0%, rgba(52, 211, 153, 0.16), transparent 60%),
+    radial-gradient(800px 480px at 92% 100%, rgba(234, 179, 8, 0.12), transparent 62%),
+    #101010;
 }
 
 .grid-overlay {
@@ -39,11 +39,11 @@ body {
   opacity: 0.3;
   animation: float-orb 10s ease-in-out infinite;
 }
-.aurora-1 { top: -22%; left: -10%; background: #22d3ee; }
-.aurora-2 { bottom: -24%; right: -8%; background: #14b8a6; animation-delay: 2s; }
+.aurora-1 { top: -22%; left: -10%; background: #34d399; }
+.aurora-2 { bottom: -24%; right: -8%; background: #eab308; animation-delay: 2s; }
 
 .glass-card {
-  background: rgba(15, 23, 42, 0.62);
+  background: rgba(24, 24, 24, 0.72);
   border: 1px solid rgba(148, 163, 184, 0.2);
   backdrop-filter: blur(12px);
 }
@@ -60,7 +60,7 @@ body {
   gap: 0.35rem;
   border-radius: 9999px;
   border: 1px solid rgba(148, 163, 184, 0.25);
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(30, 30, 30, 0.8);
 }
 
 .pill { padding: 0.35rem 0.7rem; font-size: 0.78rem; }
@@ -74,8 +74,8 @@ body {
   width: 100%;
   border-radius: 0.85rem;
   font-weight: 700;
-  color: #032028;
-  background: linear-gradient(90deg, #5eead4, #67e8f9);
+  color: #121212;
+  background: linear-gradient(90deg, #6ee7b7, #facc15);
   transition: transform .2s ease, filter .2s ease;
 }
 .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.04); }
@@ -84,8 +84,8 @@ body {
   width: 100%;
   border-radius: 0.85rem;
   border: 1px solid rgba(148, 163, 184, 0.3);
-  color: #dbe6f5;
-  background: rgba(15, 23, 42, 0.4);
+  color: #e5e7eb;
+  background: rgba(24, 24, 24, 0.7);
 }
 
 @keyframes float-orb {
