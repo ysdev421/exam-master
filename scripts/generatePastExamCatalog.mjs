@@ -1,35 +1,58 @@
 ﻿import { writeFileSync } from 'node:fs';
 
-const catalog = [
-  {
-    id: 'fe-2022-sample',
-    year: 2022,
-    sourcePage: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html',
-    questionPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04h_fe_pm_qs.pdf',
-    answerPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04h_fe_pm_ans.pdf',
-  },
-  {
-    id: 'fe-2025-sample',
-    year: 2025,
-    sourcePage: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2025r07.html',
-    questionPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2025r07h_fe_pm_qs.pdf',
-    answerPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2025r07h_fe_pm_ans.pdf',
-  },
-  {
-    id: 'fe-2024-sample',
-    year: 2024,
-    sourcePage: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2024r06.html',
-    questionPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2024r06h_fe_pm_qs.pdf',
-    answerPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2024r06h_fe_pm_ans.pdf',
-  },
-  {
-    id: 'fe-2023-sample',
-    year: 2023,
-    sourcePage: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2023r05.html',
-    questionPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2023r05h_fe_pm_qs.pdf',
-    answerPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2023r05h_fe_pm_ans.pdf',
-  },
-];
+const BASE = 'https://www.ipa.go.jp';
+const INDEX = `${BASE}/shiken/mondai-kaiotu/index.html`;
 
-writeFileSync('past-exam-catalog.json', JSON.stringify(catalog, null, 2), 'utf-8');
-console.log('Generated past-exam-catalog.json');
+const html = await fetch(INDEX).then(r => r.text());
+const pageCodes = [...new Set([...html.matchAll(/\/shiken\/mondai-kaiotu\/(\d{4}[a-z0-9]+)\.html/g)].map(m => m[1]))];
+
+function toSeason(code) {
+  if (code.includes('a')) return 'Autumn';
+  return 'Spring';
+}
+
+function toYear(token) {
+  const m = token.match(/^(\d{4})/);
+  return m ? Number(m[1]) : 0;
+}
+
+const sets = [];
+for (const code of pageCodes) {
+  const pageUrl = `${BASE}/shiken/mondai-kaiotu/${code}.html`;
+  const pageHtml = await fetch(pageUrl).then(r => r.text()).catch(() => '');
+  if (!pageHtml) continue;
+
+  const pdfs = [...new Set([...pageHtml.matchAll(/href="([^"]+_fe_[^"]+\.pdf)"/g)].map(m => m[1]))];
+  const qs = pdfs.filter(p => p.endsWith('_qs.pdf'));
+  const ans = pdfs.filter(p => p.endsWith('_ans.pdf'));
+
+  for (const q of qs) {
+    const stem = q.slice(0, -7);
+    const a = ans.find(x => x.startsWith(stem));
+    const token = stem.split('/').pop();
+    const year = toYear(token);
+    sets.push({
+      id: `fe-${token}`,
+      label: `${year} FE Public Set ${token}`,
+      year,
+      season: toSeason(token),
+      sourceUrl: pageUrl,
+      questionPdfUrl: new URL(q, BASE).toString(),
+      answerPdfUrl: new URL(a ?? q, BASE).toString(),
+    });
+  }
+}
+
+const unique = [...new Map(sets.map(s => [s.id, s])).values()].sort((a, b) => {
+  if (b.year !== a.year) return b.year - a.year;
+  return a.id.localeCompare(b.id);
+});
+
+writeFileSync('past-exam-catalog.json', JSON.stringify(unique, null, 2), 'utf-8');
+writeFileSync(
+  'src/data/pastExamSetsGenerated.ts',
+  `import type { PastExamSet } from './pastExams';\n\nexport const generatedPastExamSets: PastExamSet[] = ${JSON.stringify(unique, null, 2)};\n`,
+  'utf-8',
+);
+
+console.log(`Generated ${unique.length} FE sets.`);

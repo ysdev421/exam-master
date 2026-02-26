@@ -1,4 +1,5 @@
-﻿import { Sparkles, Library, ExternalLink } from 'lucide-react';
+﻿import { useMemo, useState } from 'react';
+import { Sparkles, Library, ExternalLink } from 'lucide-react';
 import type { Category } from '../types';
 import { questionDatabase } from '../data/questions';
 import type { PastExamSet } from '../data/pastExams';
@@ -20,6 +21,19 @@ function combinations(n: number, r: number) {
 }
 
 export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam }: Props) {
+  const [showReadyOnly, setShowReadyOnly] = useState(false);
+
+  const stats = useMemo(() => {
+    const totalSets = pastExamSets.length;
+    const readySets = pastExamSets.filter(set => (pastExamQuestionDatabase[set.id] ?? []).length > 0).length;
+    return { totalSets, readySets };
+  }, [pastExamSets]);
+
+  const shownSets = useMemo(() => {
+    if (!showReadyOnly) return pastExamSets;
+    return pastExamSets.filter(set => (pastExamQuestionDatabase[set.id] ?? []).length > 0);
+  }, [pastExamSets, showReadyOnly]);
+
   return (
     <div className="space-y-8 py-8 animate-fade-in">
       <div className="text-center space-y-2">
@@ -52,9 +66,19 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
       </section>
 
       <section className="space-y-3">
-        <h3 className="text-sm font-bold text-amber-200 inline-flex items-center gap-2"><Library size={14} /> 過去問セット演習</h3>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-amber-200 inline-flex items-center gap-2"><Library size={14} /> 過去問セット演習</h3>
+          <div className="text-xs text-slate-300 inline-flex items-center gap-3">
+            <span>収録済み {stats.readySets} / 全 {stats.totalSets}</span>
+            <label className="inline-flex items-center gap-1 cursor-pointer">
+              <input type="checkbox" checked={showReadyOnly} onChange={(e) => setShowReadyOnly(e.target.checked)} />
+              <span>収録済みのみ表示</span>
+            </label>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {pastExamSets.map((set) => {
+          {shownSets.map((set) => {
             const count = (pastExamQuestionDatabase[set.id] ?? []).length;
             const isReady = count > 0;
             return (
