@@ -37,6 +37,12 @@ function estimatePassProbability(
   return clamp(Math.round(probability * 100), 1, 99);
 }
 
+function toHeatColor(accuracy: number): string {
+  if (accuracy >= 75) return 'bg-emerald-400/25 border-emerald-300/40';
+  if (accuracy >= 60) return 'bg-amber-400/20 border-amber-300/40';
+  return 'bg-rose-400/20 border-rose-300/40';
+}
+
 export default function ResultScreen({
   score,
   sessionCorrect,
@@ -64,6 +70,16 @@ export default function ResultScreen({
 
   const passProbability = estimatePassProbability(accuracy, categoryAccuracy, totalAccuracy, totalAnswered);
   const getCategoryName = (id: string) => categories.find(c => c.id === id)?.name ?? id;
+  const perCategory = categories
+    .map(cat => {
+      const rows = history.filter(row => row.category === cat.id).slice(0, 6);
+      const answered = rows.reduce((sum, row) => sum + row.total, 0);
+      const correct = rows.reduce((sum, row) => sum + row.correct, 0);
+      const score = answered > 0 ? Math.round((correct / answered) * 100) : null;
+      return { id: cat.id, name: cat.name, score, samples: rows.length };
+    })
+    .filter(item => item.score !== null) as Array<{ id: string; name: string; score: number; samples: number }>;
+  const weakTop3 = [...perCategory].sort((a, b) => a.score - b.score).slice(0, 3);
 
   return (
     <div className="space-y-7 py-10 max-w-3xl mx-auto animate-fade-in">
@@ -93,6 +109,30 @@ export default function ResultScreen({
         <h3 className="font-bold mb-2">累計実績</h3>
         <p className="text-sm text-slate-300">Total Score: {totalScore.toLocaleString()} / Level: {level} / 累計正答率: {totalAccuracy}%</p>
       </div>
+
+      {perCategory.length > 0 && (
+        <div className="glass-card rounded-2xl p-5 space-y-4">
+          <h3 className="font-bold">分野別ヒートマップ</h3>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {perCategory.map(item => (
+              <div key={item.id} className={`rounded-lg border p-3 ${toHeatColor(item.score)}`}>
+                <div className="flex items-center justify-between text-sm">
+                  <span>{item.name}</span>
+                  <span className="font-bold">{item.score}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {weakTop3.length > 0 && (
+            <div className="rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-3">
+              <p className="text-sm font-bold mb-1">次にやるべき復習分野</p>
+              <p className="text-xs text-slate-300">
+                {weakTop3.map((w, i) => `${i + 1}. ${w.name}(${w.score}%)`).join(' / ')}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {history.length > 0 && (
         <div className="glass-card rounded-2xl p-5">
