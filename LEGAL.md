@@ -19,9 +19,11 @@
 
 ## Recommended Ongoing Controls
 1. Add an internal review checklist for every new question batch.
-2. Add a "report content" feature for users.
+2. Keep a "report content" feature for users and review flagged items before each release.
 3. Keep links to official exam policy pages and re-check at each release.
 
 ## Official Pass-Criteria Sources (checked on 2026-02-26)
-- IPA exam overview pages.
-- CBT-S FE test guide pages.
+- IPA Basic Information Technology Engineer Examination overview:
+  https://www.ipa.go.jp/shiken/kubun/fe.html
+- IPA question/answer archive index:
+  https://www.ipa.go.jp/shiken/mondai-kaiotu/index.html

@@ -1,5 +1,5 @@
-﻿import { RotateCcw, RefreshCw, ShieldCheck } from 'lucide-react';
-import type { SessionRecord } from '../types';
+import { RotateCcw, RefreshCw, ShieldCheck, Timer } from 'lucide-react';
+import type { SessionRecord, SessionMode } from '../types';
 import { categories } from '../data/categories';
 
 interface Props {
@@ -14,6 +14,11 @@ interface Props {
   history: SessionRecord[];
   patternId: string;
   selectedCategory: string | null;
+  sessionMode: SessionMode;
+  isTimeUp: boolean;
+  timeLimitSec: number | null;
+  timeLeftSec: number | null;
+  reportedCount: number;
   onStartWeakCategory: (categoryId: string) => void;
   onRetry: () => void;
   onReset: () => void;
@@ -21,6 +26,12 @@ interface Props {
 
 function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
+}
+
+function formatTimer(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 function estimatePassProbability(sessionAccuracy: number, categoryAccuracy: number, totalAccuracy: number, totalAnswered: number): number {
@@ -42,12 +53,18 @@ export default function ResultScreen({
   history,
   patternId,
   selectedCategory,
+  sessionMode,
+  isTimeUp,
+  timeLimitSec,
+  timeLeftSec,
+  reportedCount,
   onStartWeakCategory,
   onRetry,
   onReset,
 }: Props) {
   const accuracy = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
   const totalAccuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+  const consumedSec = timeLimitSec !== null && timeLeftSec !== null ? Math.max(timeLimitSec - timeLeftSec, 0) : null;
 
   const categoryHistory = selectedCategory ? history.filter(record => record.category === selectedCategory).slice(0, 6) : [];
   const categoryAnswered = categoryHistory.reduce((sum, row) => sum + row.total, 0);
@@ -72,7 +89,12 @@ export default function ResultScreen({
       <section className="glass-card rounded-3xl p-7 text-center space-y-2">
         <p className="text-xs text-slate-400">Pattern {patternId}</p>
         <div className="text-5xl md:text-6xl font-black text-cyan-200">{score} pts</div>
-        <h2 className="text-xl md:text-2xl font-bold">セッション完了</h2>
+        <h2 className="text-xl md:text-2xl font-bold">
+          {sessionMode === 'mock' ? '模試セッション完了' : 'セッション完了'}
+        </h2>
+        {sessionMode === 'mock' && isTimeUp && (
+          <p className="text-sm text-amber-200 inline-flex items-center gap-1 justify-center"><Timer size={14} /> 時間切れで自動採点しました</p>
+        )}
       </section>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -83,6 +105,13 @@ export default function ResultScreen({
           </div>
         ))}
       </section>
+
+      {sessionMode === 'mock' && consumedSec !== null && (
+        <section className="glass-card rounded-2xl p-5 space-y-1">
+          <h3 className="font-bold">模試タイム</h3>
+          <p className="text-sm text-slate-300">経過: {formatTimer(consumedSec)} / 制限: {timeLimitSec !== null ? formatTimer(timeLimitSec) : '-'}</p>
+        </section>
+      )}
 
       <section className="glass-card rounded-2xl p-5 space-y-2">
         <h3 className="font-bold">合格ライン目安</h3>
@@ -106,7 +135,7 @@ export default function ResultScreen({
 
       <section className="glass-card rounded-2xl p-4 text-xs text-slate-300 inline-flex items-start gap-2 w-full">
         <ShieldCheck size={16} className="text-emerald-300 mt-0.5" />
-        <span>本サービスは学習支援の非公式コンテンツです。公式試験問題の転載は行わず、合否の保証は行いません。</span>
+        <span>本サービスは学習支援の非公式コンテンツです。公式試験問題の転載は行わず、合否の保証は行いません。報告済み問題: {reportedCount}件</span>
       </section>
 
       <div className="space-y-3">

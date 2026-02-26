@@ -1,4 +1,5 @@
-﻿export type View = 'home' | 'categories' | 'quiz' | 'result';
+export type View = 'home' | 'categories' | 'quiz' | 'result';
+export type SessionMode = 'practice' | 'mock';
 
 export interface QuestionSource {
   setId: string;

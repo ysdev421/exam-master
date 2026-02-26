@@ -1,5 +1,5 @@
-﻿import { ChevronRight, Trophy, Lightbulb, ExternalLink } from 'lucide-react';
-import type { Question } from '../types';
+import { ChevronRight, Trophy, Lightbulb, ExternalLink } from 'lucide-react';
+import type { Question, SessionMode } from '../types';
 
 interface Props {
   currentQuestion: Question;
@@ -10,9 +10,20 @@ interface Props {
   answered: boolean;
   showHint: boolean;
   patternId: string;
+  sessionMode: SessionMode;
+  timeLeftSec: number | null;
+  timeLimitSec: number | null;
+  isReported: boolean;
   onAnswer: (index: number) => void;
   onNext: () => void;
   onToggleHint: () => void;
+  onToggleReport: () => void;
+}
+
+function formatTimer(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 export default function QuizScreen({
@@ -24,9 +35,14 @@ export default function QuizScreen({
   answered,
   showHint,
   patternId,
+  sessionMode,
+  timeLeftSec,
+  timeLimitSec,
+  isReported,
   onAnswer,
   onNext,
   onToggleHint,
+  onToggleReport,
 }: Props) {
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
@@ -35,9 +51,19 @@ export default function QuizScreen({
       <div className="glass-card rounded-2xl p-5">
         <div className="flex flex-wrap justify-between items-center gap-2 mb-3 text-sm">
           <span className="font-bold text-cyan-200">Q{currentQuestionIndex + 1} / {totalQuestions}</span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <span className="chip">{categoryName}</span>
+            <span className="chip">{sessionMode === 'mock' ? 'Mock' : 'Practice'}</span>
             <span className="chip">Pattern {patternId}</span>
+            {sessionMode === 'mock' && timeLeftSec !== null && (
+              <span className="chip">
+                残り {formatTimer(timeLeftSec)}
+                {timeLimitSec !== null ? ` / ${formatTimer(timeLimitSec)}` : ''}
+              </span>
+            )}
+            <button onClick={onToggleReport} className={`chip ${isReported ? 'border-rose-300/70 text-rose-200' : ''}`}>
+              {isReported ? '報告済み' : '問題を報告'}
+            </button>
           </div>
         </div>
         <div className="h-2.5 rounded-full bg-slate-700/45 overflow-hidden">

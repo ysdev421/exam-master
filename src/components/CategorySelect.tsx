@@ -1,5 +1,5 @@
 ﻿import { useMemo, useState } from 'react';
-import { Sparkles, Library, ExternalLink } from 'lucide-react';
+import { Sparkles, Library, ExternalLink, Timer } from 'lucide-react';
 import type { Category } from '../types';
 import { questionDatabase } from '../data/questions';
 import type { PastExamSet } from '../data/pastExams';
@@ -10,6 +10,7 @@ interface Props {
   pastExamSets: PastExamSet[];
   onSelectCategory: (id: string) => void;
   onSelectPastExam: (setId: string) => void;
+  onStartMockExam: (count: number) => void;
 }
 
 function combinations(n: number, r: number) {
@@ -20,7 +21,7 @@ function combinations(n: number, r: number) {
   return Math.floor(result);
 }
 
-export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam }: Props) {
+export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam, onStartMockExam }: Props) {
   const [showReadyOnly, setShowReadyOnly] = useState(false);
   const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
 
@@ -61,6 +62,25 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
         <h2 className="section-title">学習モードを選択</h2>
         <p className="text-sm text-slate-300">カテゴリ演習か、過去問セット演習を選べます。</p>
       </div>
+
+      <section className="space-y-3">
+        <div className="w-full glass-card rounded-2xl p-5 text-left border border-emerald-300/35 bg-gradient-to-r from-emerald-400/10 to-cyan-300/10">
+          <p className="text-xs text-emerald-200/90 mb-1 inline-flex items-center gap-1"><Timer size={12} /> 模擬試験モード</p>
+          <h3 className="font-bold text-lg mb-1">時間制限チャレンジ</h3>
+          <p className="text-xs text-slate-300 mb-3">カテゴリ・過去問を横断して出題。時間切れで自動採点します。</p>
+          <div className="flex flex-wrap gap-2">
+            {[10, 20, 40].map((count) => (
+              <button
+                key={count}
+                onClick={() => onStartMockExam(count)}
+                className="chip hover:border-emerald-300/70 hover:text-emerald-100 transition"
+              >
+                {count}問
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="space-y-3">
         <h3 className="text-sm font-bold text-cyan-200 inline-flex items-center gap-2"><Sparkles size={14} /> カテゴリ演習</h3>

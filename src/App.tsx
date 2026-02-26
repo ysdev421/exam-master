@@ -9,7 +9,9 @@ import ResultScreen from './components/ResultScreen';
 
 export default function App() {
   const quiz = useQuiz();
-  const quizTitle = quiz.selectedPastExamSetLabel ?? categories.find(c => c.id === quiz.selectedCategory)?.name ?? '';
+  const quizTitle = quiz.selectedPastExamSetLabel
+    ?? (quiz.selectedCategory === 'mock-all' ? '模擬試験' : categories.find(c => c.id === quiz.selectedCategory)?.name)
+    ?? '';
 
   return (
     <div className="min-h-screen bg-ink text-slate-100 overflow-x-hidden">
@@ -39,6 +41,7 @@ export default function App() {
               pastExamSets={pastExamSets}
               onSelectCategory={quiz.handleStartCategory}
               onSelectPastExam={quiz.handleStartPastExam}
+              onStartMockExam={quiz.handleStartMockExam}
             />
           )}
 
@@ -52,9 +55,14 @@ export default function App() {
               answered={quiz.answered}
               showHint={quiz.showHint}
               patternId={quiz.patternId}
+              sessionMode={quiz.sessionMode}
+              timeLeftSec={quiz.timeLeftSec}
+              timeLimitSec={quiz.timeLimitSec}
+              isReported={quiz.reportedQuestionIds.includes(quiz.currentQuestion.id)}
               onAnswer={quiz.handleAnswerClick}
               onNext={quiz.handleNextQuestion}
               onToggleHint={() => quiz.setShowHint(!quiz.showHint)}
+              onToggleReport={quiz.toggleReportCurrentQuestion}
             />
           )}
 
@@ -71,6 +79,11 @@ export default function App() {
               history={quiz.savedData.history}
               patternId={quiz.patternId}
               selectedCategory={quiz.selectedCategory}
+              sessionMode={quiz.sessionMode}
+              isTimeUp={quiz.isTimeUp}
+              timeLimitSec={quiz.timeLimitSec}
+              timeLeftSec={quiz.timeLeftSec}
+              reportedCount={quiz.reportedQuestionIds.length}
               onStartWeakCategory={quiz.handleStartCategory}
               onRetry={quiz.handleRetry}
               onReset={quiz.handleReset}

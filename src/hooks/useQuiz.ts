@@ -1,12 +1,14 @@
-﻿import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { questionDatabase } from '../data/questions';
 import { pastExamQuestionDatabase, pastExamSets } from '../data/pastExams';
 import { useLocalStorage } from './useLocalStorage';
-import type { View, SavedData, Question } from '../types';
+import type { View, SavedData, Question, SessionMode } from '../types';
 
 const STORAGE_KEY = 'examquest-v1';
 const PATTERN_STORAGE_KEY = 'examquest-patterns-v1';
 const FIRST_QUESTION_STORAGE_KEY = 'examquest-first-question-v1';
+const RECENT_QUESTION_STORAGE_KEY = 'examquest-recent-questions-v1';
+const REPORTED_QUESTION_STORAGE_KEY = 'examquest-reported-questions-v1';
 
 const INITIAL_DATA: SavedData = {
   totalScore: 0,
@@ -16,7 +18,9 @@ const INITIAL_DATA: SavedData = {
 };
 
 const QUESTIONS_PER_SESSION = 6;
+const DEFAULT_MOCK_QUESTIONS = 20;
 const MAX_RECENT_PATTERNS = 8;
+const MAX_RECENT_QUESTION_IDS = 50;
 
 function shuffle<T>(items: T[]): T[] {
   const arr = [...items];
@@ -45,6 +49,12 @@ function getPatternSignature(questions: Question[]): string {
   return ids.join('|');
 }
 
+function uniqueRecentIds(prev: number[], next: number[]): number[] {
+  const merged = [...prev, ...next];
+  const deduped = merged.filter((id, index) => merged.indexOf(id) === index);
+  return deduped.slice(-MAX_RECENT_QUESTION_IDS);
+}
+
 export function useQuiz() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [score, setScore] = useState(0);
@@ -58,8 +68,16 @@ export function useQuiz() {
   const [sessionCorrect, setSessionCorrect] = useState(0);
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
   const [patternId, setPatternId] = useState('');
+  const [sessionMode, setSessionMode] = useState<SessionMode>('practice');
+  const [timeLimitSec, setTimeLimitSec] = useState<number | null>(null);
+  const [timeLeftSec, setTimeLeftSec] = useState<number | null>(null);
+  const [isTimeUp, setIsTimeUp] = useState(false);
+  const [isSessionFinalized, setIsSessionFinalized] = useState(false);
+  const [mockQuestionCount, setMockQuestionCount] = useState(DEFAULT_MOCK_QUESTIONS);
   const [recentPatternsByCategory, setRecentPatternsByCategory] = useLocalStorage<Record<string, string[]>>(PATTERN_STORAGE_KEY, {});
   const [recentFirstQuestionByCategory, setRecentFirstQuestionByCategory] = useLocalStorage<Record<string, number>>(FIRST_QUESTION_STORAGE_KEY, {});
+  const [recentQuestionIdsByScope, setRecentQuestionIdsByScope] = useLocalStorage<Record<string, number[]>>(RECENT_QUESTION_STORAGE_KEY, {});
+  const [reportedQuestionIds, setReportedQuestionIds] = useLocalStorage<number[]>(REPORTED_QUESTION_STORAGE_KEY, []);
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
   const level = Math.floor(savedData.totalScore / 50) + 1;
@@ -68,6 +86,47 @@ export function useQuiz() {
   const selectedPastExamSetLabel = selectedPastExamSet
     ? (pastExamSets.find(s => s.id === selectedPastExamSet)?.label ?? selectedPastExamSet)
     : null;
+
+  const finalizeSession = () => {
+    if (isSessionFinalized) return;
+    setSavedData(prev => ({
+      ...prev,
+      history: [
+        {
+          date: new Date().toISOString(),
+          category: selectedPastExamSet ? `past:${selectedPastExamSet}` : (selectedCategory ?? ''),
+          score,
+          correct: sessionCorrect,
+          total: currentQuestions.length,
+        },
+        ...prev.history,
+      ].slice(0, 20),
+    }));
+    setIsSessionFinalized(true);
+    setCurrentView('result');
+  };
+
+  useEffect(() => {
+    if (currentView !== 'quiz' || sessionMode !== 'mock' || timeLeftSec === null || timeLeftSec <= 0) return undefined;
+    const timer = setInterval(() => {
+      setTimeLeftSec(prev => {
+        if (prev === null) return prev;
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsTimeUp(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [currentView, sessionMode, timeLeftSec]);
+
+  useEffect(() => {
+    if (currentView === 'quiz' && sessionMode === 'mock' && timeLeftSec === 0) {
+      finalizeSession();
+    }
+  }, [currentView, sessionMode, timeLeftSec]);
 
   const handleAnswerClick = (index: number) => {
     if (answered || !currentQuestion) return;
@@ -94,25 +153,32 @@ export function useQuiz() {
       setAnswered(false);
       setShowHint(false);
     } else {
-      setSavedData(prev => ({
-        ...prev,
-        history: [{ date: new Date().toISOString(), category: selectedPastExamSet ? `past:${selectedPastExamSet}` : (selectedCategory ?? ''), score, correct: sessionCorrect, total: currentQuestions.length }, ...prev.history].slice(0, 20),
-      }));
-      setCurrentView('result');
+      finalizeSession();
     }
   };
 
-  const startWithPool = (scopeId: string, pool: Question[], isPastExam: boolean) => {
+  const startWithPool = (
+    scopeId: string,
+    pool: Question[],
+    isPastExam: boolean,
+    mode: SessionMode = 'practice',
+    questionCount = QUESTIONS_PER_SESSION,
+    sessionTimeLimitSec: number | null = null,
+  ) => {
     if (pool.length === 0) return;
 
     const recent = recentPatternsByCategory[scopeId] ?? [];
     const previousFirstId = recentFirstQuestionByCategory[scopeId] ?? null;
+    const recentQuestionIds = recentQuestionIdsByScope[scopeId] ?? [];
     let picked: Question[] = [];
     let signature = '';
     let attempts = 0;
 
     do {
-      picked = shuffle(pool).slice(0, Math.min(QUESTIONS_PER_SESSION, pool.length)).map(shuffleAnswers);
+      const targetCount = Math.min(questionCount, pool.length);
+      const preferredPool = pool.filter(q => !recentQuestionIds.includes(q.id));
+      const candidatePool = preferredPool.length >= targetCount ? preferredPool : pool;
+      picked = shuffle(candidatePool).slice(0, targetCount).map(shuffleAnswers);
       signature = getPatternSignature(picked);
       attempts += 1;
     } while (attempts < 40 && (recent.includes(signature) || (previousFirstId !== null && picked[0]?.id === previousFirstId)));
@@ -121,8 +187,14 @@ export function useQuiz() {
     setSelectedCategory(isPastExam ? null : scopeId);
     setSessionQuestions(picked);
     setPatternId(makePatternId(scopeId));
+    setSessionMode(mode);
+    setTimeLimitSec(sessionTimeLimitSec);
+    setTimeLeftSec(sessionTimeLimitSec);
+    setIsTimeUp(false);
+    setIsSessionFinalized(false);
     setRecentPatternsByCategory(prev => ({ ...prev, [scopeId]: [signature, ...(prev[scopeId] ?? []).filter(item => item !== signature)].slice(0, MAX_RECENT_PATTERNS) }));
     if (picked[0]) setRecentFirstQuestionByCategory(prev => ({ ...prev, [scopeId]: picked[0].id }));
+    setRecentQuestionIdsByScope(prev => ({ ...prev, [scopeId]: uniqueRecentIds(prev[scopeId] ?? [], picked.map(q => q.id)) }));
 
     setCurrentView('quiz');
     setCurrentQuestionIndex(0);
@@ -142,7 +214,21 @@ export function useQuiz() {
     startWithPool(setId, pastExamQuestionDatabase[setId] ?? [], true);
   };
 
+  const handleStartMockExam = (count = DEFAULT_MOCK_QUESTIONS) => {
+    const categoryPool = Object.values(questionDatabase).flat();
+    const pastPool = Object.values(pastExamQuestionDatabase).flat();
+    const mergedPool = [...categoryPool, ...pastPool];
+    const questionCount = Math.max(5, Math.min(count, mergedPool.length));
+    const timeLimit = questionCount * 90;
+    setMockQuestionCount(questionCount);
+    startWithPool('mock-all', mergedPool, false, 'mock', questionCount, timeLimit);
+  };
+
   const handleRetry = () => {
+    if (sessionMode === 'mock') {
+      handleStartMockExam(mockQuestionCount);
+      return;
+    }
     if (selectedPastExamSet) {
       handleStartPastExam(selectedPastExamSet);
       return;
@@ -163,6 +249,16 @@ export function useQuiz() {
     setShowHint(false);
     setSessionQuestions([]);
     setPatternId('');
+    setSessionMode('practice');
+    setTimeLimitSec(null);
+    setTimeLeftSec(null);
+    setIsTimeUp(false);
+    setIsSessionFinalized(false);
+  };
+
+  const toggleReportCurrentQuestion = () => {
+    if (!currentQuestion) return;
+    setReportedQuestionIds(prev => (prev.includes(currentQuestion.id) ? prev.filter(id => id !== currentQuestion.id) : [...prev, currentQuestion.id]));
   };
 
   const sessionAccuracy = useMemo(() => (currentQuestions.length > 0 ? Math.round((sessionCorrect / currentQuestions.length) * 100) : 0), [currentQuestions.length, sessionCorrect]);
@@ -187,11 +283,18 @@ export function useQuiz() {
     currentQuestions,
     currentQuestion,
     patternId,
+    sessionMode,
+    timeLimitSec,
+    timeLeftSec,
+    isTimeUp,
+    reportedQuestionIds,
     handleAnswerClick,
     handleNextQuestion,
     handleStartCategory,
     handleStartPastExam,
+    handleStartMockExam,
     handleRetry,
     handleReset,
+    toggleReportCurrentQuestion,
   };
 }
