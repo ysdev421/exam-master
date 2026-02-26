@@ -9,6 +9,10 @@ import ResultScreen from './components/ResultScreen';
 
 export default function App() {
   const quiz = useQuiz();
+  const reportSummary = Object.values(quiz.reportedQuestionReasons).reduce<Record<string, number>>((acc, reason) => {
+    acc[reason] = (acc[reason] ?? 0) + 1;
+    return acc;
+  }, {});
   const quizTitle = quiz.selectedPastExamSetLabel
     ?? (quiz.selectedCategory === 'mock-all'
       ? '模擬試験'
@@ -91,6 +95,7 @@ export default function App() {
               timeLimitSec={quiz.timeLimitSec}
               timeLeftSec={quiz.timeLeftSec}
               reportedCount={Object.keys(quiz.reportedQuestionReasons).length}
+              reportSummary={reportSummary}
               weakQuestionCount={quiz.weakQuestionIds.length}
               onStartWeakCategory={quiz.handleStartCategory}
               onStartWeakDrill={quiz.handleStartWeakDrill}

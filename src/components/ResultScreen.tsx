@@ -19,6 +19,7 @@ interface Props {
   timeLimitSec: number | null;
   timeLeftSec: number | null;
   reportedCount: number;
+  reportSummary: Record<string, number>;
   weakQuestionCount: number;
   onStartWeakCategory: (categoryId: string) => void;
   onStartWeakDrill: () => void;
@@ -70,6 +71,7 @@ export default function ResultScreen({
   timeLimitSec,
   timeLeftSec,
   reportedCount,
+  reportSummary,
   weakQuestionCount,
   onStartWeakCategory,
   onStartWeakDrill,
@@ -163,6 +165,18 @@ export default function ResultScreen({
         <ShieldCheck size={16} className="text-emerald-300 mt-0.5" />
         <span>本サービスは学習支援の非公式コンテンツです。公式試験問題の転載は行わず、合否の保証は行いません。報告済み問題: {reportedCount}件</span>
       </section>
+
+      {Object.keys(reportSummary).length > 0 && (
+        <section className="glass-card rounded-2xl p-4 space-y-2">
+          <h3 className="font-bold text-sm">報告理由サマリ</h3>
+          <p className="text-xs text-slate-300">
+            {Object.entries(reportSummary)
+              .sort((a, b) => b[1] - a[1])
+              .map(([reason, count]) => `${reason}: ${count}件`)
+              .join(' / ')}
+          </p>
+        </section>
+      )}
 
       <div className="space-y-3">
         <button onClick={onRetry} className="btn-primary py-3.5"><RefreshCw size={16} /> 別パターンで再挑戦</button>
