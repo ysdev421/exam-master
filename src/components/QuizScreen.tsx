@@ -1,4 +1,4 @@
-﻿import { ChevronRight, Trophy, Lightbulb } from 'lucide-react';
+﻿import { ChevronRight, Trophy, Lightbulb, ExternalLink } from 'lucide-react';
 import type { Question } from '../types';
 
 interface Props {
@@ -50,8 +50,18 @@ export default function QuizScreen({
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-200/85 mb-3">Question</p>
           <h2 className="text-lg md:text-2xl leading-relaxed font-bold">{currentQuestion.question}</h2>
           {currentQuestion.source && (
-            <p className="mt-3 text-xs text-slate-300">
+            <p className="mt-3 text-xs text-slate-300 inline-flex items-center gap-1">
               出典: {currentQuestion.source.label} {currentQuestion.source.questionNo}
+              {currentQuestion.source.url && (
+                <a
+                  href={currentQuestion.source.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-cyan-200 hover:text-cyan-100"
+                >
+                  <ExternalLink size={11} /> 参照
+                </a>
+              )}
             </p>
           )}
         </section>

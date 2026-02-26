@@ -2,26 +2,17 @@ import type { PastExamSet } from './pastExams';
 
 export const generatedPastExamSets: PastExamSet[] = [
   {
-    "id": "fe-2019r01a_fe_pm",
-    "label": "2019? FE ???? 2019r01a_fe_pm",
+    "id": "fe-2019h31h_fe_am",
+    "label": "2019 FE Public Set 2019h31h_fe_am",
     "year": 2019,
-    "season": "Spring",
+    "season": "Autumn",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2019h31.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_pm_ans.pdf"
-  },
-  {
-    "id": "fe-2019r01a_fe_am",
-    "label": "2019? FE ???? 2019r01a_fe_am",
-    "year": 2019,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2019h31.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_am_ans.pdf"
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000ddiw-att/2019h31h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000ddiw-att/2019h31h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2019h31h_fe_pm",
-    "label": "2019? FE ???? 2019h31h_fe_pm",
+    "label": "2019 FE Public Set 2019h31h_fe_pm",
     "year": 2019,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2019h31.html",
@@ -29,17 +20,53 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000ddiw-att/2019h31h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2019h31h_fe_am",
-    "label": "2019? FE ???? 2019h31h_fe_am",
+    "id": "fe-2019r01a_fe_am",
+    "label": "2019 FE Public Set 2019r01a_fe_am",
     "year": 2019,
-    "season": "Spring",
+    "season": "Autumn",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2019h31.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000ddiw-att/2019h31h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000ddiw-att/2019h31h_fe_am_ans.pdf"
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_am_ans.pdf"
+  },
+  {
+    "id": "fe-2019r01a_fe_pm",
+    "label": "2019 FE Public Set 2019r01a_fe_pm",
+    "year": 2019,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2019h31.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000dict-att/2019r01a_fe_pm_ans.pdf"
+  },
+  {
+    "id": "fe-2018h30a_fe_am",
+    "label": "2018 FE Public Set 2018h30a_fe_am",
+    "year": 2018,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_am_ans.pdf"
+  },
+  {
+    "id": "fe-2018h30a_fe_pm",
+    "label": "2018 FE Public Set 2018h30a_fe_pm",
+    "year": 2018,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_pm_ans.pdf"
+  },
+  {
+    "id": "fe-2018h30h_fe_am",
+    "label": "2018 FE Public Set 2018h30h_fe_am",
+    "year": 2018,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fabr-att/2018h30h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fabr-att/2018h30h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2018h30h_fe_pm",
-    "label": "2018? FE ???? 2018h30h_fe_pm",
+    "label": "2018 FE Public Set 2018h30h_fe_pm",
     "year": 2018,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
@@ -47,35 +74,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fabr-att/2018h30h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2018h30h_fe_am",
-    "label": "2018? FE ???? 2018h30h_fe_am",
-    "year": 2018,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fabr-att/2018h30h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fabr-att/2018h30h_fe_am_ans.pdf"
+    "id": "fe-2017h29a_fe_am",
+    "label": "2017 FE Public Set 2017h29a_fe_am",
+    "year": 2017,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2018h30a_fe_pm",
-    "label": "2018? FE ???? 2018h30a_fe_pm",
-    "year": 2018,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_pm_ans.pdf"
+    "id": "fe-2017h29a_fe_pm",
+    "label": "2017 FE Public Set 2017h29a_fe_pm",
+    "year": 2017,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2018h30a_fe_am",
-    "label": "2018? FE ???? 2018h30a_fe_am",
-    "year": 2018,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2018h30.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f01f-att/2018h30a_fe_am_ans.pdf"
+    "id": "fe-2017h29h_fe_am",
+    "label": "2017 FE Public Set 2017h29h_fe_am",
+    "year": 2017,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fzx1-att/2017h29h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fzx1-att/2017h29h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2017h29h_fe_pm",
-    "label": "2017? FE ???? 2017h29h_fe_pm",
+    "label": "2017 FE Public Set 2017h29h_fe_pm",
     "year": 2017,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
@@ -83,35 +110,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fzx1-att/2017h29h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2017h29h_fe_am",
-    "label": "2017? FE ???? 2017h29h_fe_am",
-    "year": 2017,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fzx1-att/2017h29h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fzx1-att/2017h29h_fe_am_ans.pdf"
+    "id": "fe-2016h28a_fe_am",
+    "label": "2016 FE Public Set 2016h28a_fe_am",
+    "year": 2016,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2017h29a_fe_pm",
-    "label": "2017? FE ???? 2017h29a_fe_pm",
-    "year": 2017,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_pm_ans.pdf"
+    "id": "fe-2016h28a_fe_pm",
+    "label": "2016 FE Public Set 2016h28a_fe_pm",
+    "year": 2016,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2017h29a_fe_am",
-    "label": "2017? FE ???? 2017h29a_fe_am",
-    "year": 2017,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2017h29.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000fqpm-att/2017h29a_fe_am_ans.pdf"
+    "id": "fe-2016h28h_fe_am",
+    "label": "2016 FE Public Set 2016h28h_fe_am",
+    "year": 2016,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gn5o-att/2016h28h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gn5o-att/2016h28h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2016h28h_fe_pm",
-    "label": "2016? FE ???? 2016h28h_fe_pm",
+    "label": "2016 FE Public Set 2016h28h_fe_pm",
     "year": 2016,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
@@ -119,35 +146,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gn5o-att/2016h28h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2016h28h_fe_am",
-    "label": "2016? FE ???? 2016h28h_fe_am",
-    "year": 2016,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gn5o-att/2016h28h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gn5o-att/2016h28h_fe_am_ans.pdf"
+    "id": "fe-2015h27a_fe_am",
+    "label": "2015 FE Public Set 2015h27a_fe_am",
+    "year": 2015,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2016h28a_fe_pm",
-    "label": "2016? FE ???? 2016h28a_fe_pm",
-    "year": 2016,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_pm_ans.pdf"
+    "id": "fe-2015h27a_fe_pm",
+    "label": "2015 FE Public Set 2015h27a_fe_pm",
+    "year": 2015,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2016h28a_fe_am",
-    "label": "2016? FE ???? 2016h28a_fe_am",
-    "year": 2016,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2016h28.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000g6fw-att/2016h28a_fe_am_ans.pdf"
+    "id": "fe-2015h27h_fe_am",
+    "label": "2015 FE Public Set 2015h27h_fe_am",
+    "year": 2015,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000f52-att/2015h27h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000f52-att/2015h27h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2015h27h_fe_pm",
-    "label": "2015? FE ???? 2015h27h_fe_pm",
+    "label": "2015 FE Public Set 2015h27h_fe_pm",
     "year": 2015,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
@@ -155,35 +182,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000f52-att/2015h27h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2015h27h_fe_am",
-    "label": "2015? FE ???? 2015h27h_fe_am",
-    "year": 2015,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000f52-att/2015h27h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000f52-att/2015h27h_fe_am_ans.pdf"
+    "id": "fe-2014h26a_fe_am",
+    "label": "2014 FE Public Set 2014h26a_fe_am",
+    "year": 2014,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2015h27a_fe_pm",
-    "label": "2015? FE ???? 2015h27a_fe_pm",
-    "year": 2015,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_pm_ans.pdf"
+    "id": "fe-2014h26a_fe_pm",
+    "label": "2014 FE Public Set 2014h26a_fe_pm",
+    "year": 2014,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2015h27a_fe_am",
-    "label": "2015? FE ???? 2015h27a_fe_am",
-    "year": 2015,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2015h27.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000gxj0-att/2015h27a_fe_am_ans.pdf"
+    "id": "fe-2014h26h_fe_am",
+    "label": "2014 FE Public Set 2014h26h_fe_am",
+    "year": 2014,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000001dzu-att/2014h26h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000001dzu-att/2014h26h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2014h26h_fe_pm",
-    "label": "2014? FE ???? 2014h26h_fe_pm",
+    "label": "2014 FE Public Set 2014h26h_fe_pm",
     "year": 2014,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
@@ -191,35 +218,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000001dzu-att/2014h26h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2014h26h_fe_am",
-    "label": "2014? FE ???? 2014h26h_fe_am",
-    "year": 2014,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000001dzu-att/2014h26h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000001dzu-att/2014h26h_fe_am_ans.pdf"
+    "id": "fe-2013h25a_fe_am",
+    "label": "2013 FE Public Set 2013h25a_fe_am",
+    "year": 2013,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2014h26a_fe_pm",
-    "label": "2014? FE ???? 2014h26a_fe_pm",
-    "year": 2014,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_pm_ans.pdf"
+    "id": "fe-2013h25a_fe_pm",
+    "label": "2013 FE Public Set 2013h25a_fe_pm",
+    "year": 2013,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2014h26a_fe_am",
-    "label": "2014? FE ???? 2014h26a_fe_am",
-    "year": 2014,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2014h26.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000000ye5-att/2014h26a_fe_am_ans.pdf"
+    "id": "fe-2013h25h_fe_am",
+    "label": "2013 FE Public Set 2013h25h_fe_am",
+    "year": 2013,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002e6g-att/2013h25h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002e6g-att/2013h25h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2013h25h_fe_pm",
-    "label": "2013? FE ???? 2013h25h_fe_pm",
+    "label": "2013 FE Public Set 2013h25h_fe_pm",
     "year": 2013,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
@@ -227,35 +254,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002e6g-att/2013h25h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2013h25h_fe_am",
-    "label": "2013? FE ???? 2013h25h_fe_am",
-    "year": 2013,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002e6g-att/2013h25h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002e6g-att/2013h25h_fe_am_ans.pdf"
+    "id": "fe-2012h24a_fe_am",
+    "label": "2012 FE Public Set 2012h24a_fe_am",
+    "year": 2012,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2013h25a_fe_pm",
-    "label": "2013? FE ???? 2013h25a_fe_pm",
-    "year": 2013,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_pm_ans.pdf"
+    "id": "fe-2012h24a_fe_pm",
+    "label": "2012 FE Public Set 2012h24a_fe_pm",
+    "year": 2012,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2013h25a_fe_am",
-    "label": "2013? FE ???? 2013h25a_fe_am",
-    "year": 2013,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2013h25.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000027za-att/2013h25a_fe_am_ans.pdf"
+    "id": "fe-2012h24h_fe_am",
+    "label": "2012 FE Public Set 2012h24h_fe_am",
+    "year": 2012,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000038er-att/2012h24h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000038er-att/2012h24h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2012h24h_fe_pm",
-    "label": "2012? FE ???? 2012h24h_fe_pm",
+    "label": "2012 FE Public Set 2012h24h_fe_pm",
     "year": 2012,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
@@ -263,35 +290,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000038er-att/2012h24h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2012h24h_fe_am",
-    "label": "2012? FE ???? 2012h24h_fe_am",
-    "year": 2012,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000038er-att/2012h24h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p900000038er-att/2012h24h_fe_am_ans.pdf"
+    "id": "fe-2011h23a_fe_am",
+    "label": "2011 FE Public Set 2011h23a_fe_am",
+    "year": 2011,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2012h24a_fe_pm",
-    "label": "2012? FE ???? 2012h24a_fe_pm",
-    "year": 2012,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_pm_ans.pdf"
+    "id": "fe-2011h23a_fe_pm",
+    "label": "2011 FE Public Set 2011h23a_fe_pm",
+    "year": 2011,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2012h24a_fe_am",
-    "label": "2012? FE ???? 2012h24a_fe_am",
-    "year": 2012,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2012h24.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000002h5m-att/2012h24a_fe_am_ans.pdf"
+    "id": "fe-2011h23tokubetsu_fe_am",
+    "label": "2011 FE Public Set 2011h23tokubetsu_fe_am",
+    "year": 2011,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ya2-att/2011h23tokubetsu_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ya2-att/2011h23tokubetsu_fe_am_ans.pdf"
   },
   {
     "id": "fe-2011h23tokubetsu_fe_pm",
-    "label": "2011? FE ???? 2011h23tokubetsu_fe_pm",
+    "label": "2011 FE Public Set 2011h23tokubetsu_fe_pm",
     "year": 2011,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
@@ -299,35 +326,35 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ya2-att/2011h23tokubetsu_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2011h23tokubetsu_fe_am",
-    "label": "2011? FE ???? 2011h23tokubetsu_fe_am",
-    "year": 2011,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ya2-att/2011h23tokubetsu_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ya2-att/2011h23tokubetsu_fe_am_ans.pdf"
+    "id": "fe-2010h22a_fe_am",
+    "label": "2010 FE Public Set 2010h22a_fe_am",
+    "year": 2010,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_am_ans.pdf"
   },
   {
-    "id": "fe-2011h23a_fe_pm",
-    "label": "2011? FE ???? 2011h23a_fe_pm",
-    "year": 2011,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_pm_ans.pdf"
+    "id": "fe-2010h22a_fe_pm",
+    "label": "2010 FE Public Set 2010h22a_fe_pm",
+    "year": 2010,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2011h23a_fe_am",
-    "label": "2011? FE ???? 2011h23a_fe_am",
-    "year": 2011,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2011h23.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000003ojp-att/2011h23a_fe_am_ans.pdf"
+    "id": "fe-2010h22h_fe_am",
+    "label": "2010 FE Public Set 2010h22h_fe_am",
+    "year": 2010,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004n2z-att/2010h22h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004n2z-att/2010h22h_fe_am_ans.pdf"
   },
   {
     "id": "fe-2010h22h_fe_pm",
-    "label": "2010? FE ???? 2010h22h_fe_pm",
+    "label": "2010 FE Public Set 2010h22h_fe_pm",
     "year": 2010,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
@@ -335,66 +362,39 @@ export const generatedPastExamSets: PastExamSet[] = [
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004n2z-att/2010h22h_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2010h22h_fe_am",
-    "label": "2010? FE ???? 2010h22h_fe_am",
-    "year": 2010,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004n2z-att/2010h22h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004n2z-att/2010h22h_fe_am_ans.pdf"
-  },
-  {
-    "id": "fe-2010h22a_fe_pm",
-    "label": "2010? FE ???? 2010h22a_fe_pm",
-    "year": 2010,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_pm_ans.pdf"
-  },
-  {
-    "id": "fe-2010h22a_fe_am",
-    "label": "2010? FE ???? 2010h22a_fe_am",
-    "year": 2010,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2010h22.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000004d6f-att/2010h22a_fe_am_ans.pdf"
-  },
-  {
-    "id": "fe-2009h21h_fe_pm",
-    "label": "2009? FE ???? 2009h21h_fe_pm",
+    "id": "fe-2009h21a_fe_am",
+    "label": "2009 FE Public Set 2009h21a_fe_am",
     "year": 2009,
-    "season": "Spring",
+    "season": "Autumn",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2009h21.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_pm_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_pm_ans.pdf"
-  },
-  {
-    "id": "fe-2009h21h_fe_am",
-    "label": "2009? FE ???? 2009h21h_fe_am",
-    "year": 2009,
-    "season": "Spring",
-    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2009h21.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_am_ans.pdf"
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_am_ans.pdf"
   },
   {
     "id": "fe-2009h21a_fe_pm",
-    "label": "2009? FE ???? 2009h21a_fe_pm",
+    "label": "2009 FE Public Set 2009h21a_fe_pm",
     "year": 2009,
-    "season": "Spring",
+    "season": "Autumn",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2009h21.html",
     "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_pm_qs.pdf",
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_pm_ans.pdf"
   },
   {
-    "id": "fe-2009h21a_fe_am",
-    "label": "2009? FE ???? 2009h21a_fe_am",
+    "id": "fe-2009h21h_fe_am",
+    "label": "2009 FE Public Set 2009h21h_fe_am",
+    "year": 2009,
+    "season": "Autumn",
+    "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2009h21.html",
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_am_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_am_ans.pdf"
+  },
+  {
+    "id": "fe-2009h21h_fe_pm",
+    "label": "2009 FE Public Set 2009h21h_fe_pm",
     "year": 2009,
     "season": "Spring",
     "sourceUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/2009h21.html",
-    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_am_qs.pdf",
-    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_am_ans.pdf"
+    "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_pm_qs.pdf",
+    "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/ug65p90000009bhl-att/2009h21h_fe_pm_ans.pdf"
   }
 ];

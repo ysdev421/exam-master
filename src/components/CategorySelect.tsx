@@ -22,6 +22,7 @@ function combinations(n: number, r: number) {
 
 export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam }: Props) {
   const [showReadyOnly, setShowReadyOnly] = useState(false);
+  const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
 
   const stats = useMemo(() => {
     const totalSets = pastExamSets.length;
@@ -29,10 +30,30 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
     return { totalSets, readySets };
   }, [pastExamSets]);
 
+  const years = useMemo(
+    () => [...new Set(pastExamSets.map(s => s.year))].sort((a, b) => b - a),
+    [pastExamSets],
+  );
+
   const shownSets = useMemo(() => {
-    if (!showReadyOnly) return pastExamSets;
-    return pastExamSets.filter(set => (pastExamQuestionDatabase[set.id] ?? []).length > 0);
-  }, [pastExamSets, showReadyOnly]);
+    let list = [...pastExamSets];
+    if (showReadyOnly) {
+      list = list.filter(set => (pastExamQuestionDatabase[set.id] ?? []).length > 0);
+    }
+    if (yearFilter !== 'all') {
+      list = list.filter(set => set.year === yearFilter);
+    }
+
+    list.sort((a, b) => {
+      const ac = (pastExamQuestionDatabase[a.id] ?? []).length;
+      const bc = (pastExamQuestionDatabase[b.id] ?? []).length;
+      if ((bc > 0) !== (ac > 0)) return bc > 0 ? 1 : -1;
+      if (b.year !== a.year) return b.year - a.year;
+      return a.id.localeCompare(b.id);
+    });
+
+    return list;
+  }, [pastExamSets, showReadyOnly, yearFilter]);
 
   return (
     <div className="space-y-8 py-8 animate-fade-in">
@@ -72,9 +93,27 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
             <span>収録済み {stats.readySets} / 全 {stats.totalSets}</span>
             <label className="inline-flex items-center gap-1 cursor-pointer">
               <input type="checkbox" checked={showReadyOnly} onChange={(e) => setShowReadyOnly(e.target.checked)} />
-              <span>収録済みのみ表示</span>
+              <span>収録済みのみ</span>
             </label>
           </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setYearFilter('all')}
+            className={`chip ${yearFilter === 'all' ? 'border-cyan-300/80 text-cyan-200' : ''}`}
+          >
+            全年度
+          </button>
+          {years.map((year) => (
+            <button
+              key={year}
+              onClick={() => setYearFilter(year)}
+              className={`chip ${yearFilter === year ? 'border-cyan-300/80 text-cyan-200' : ''}`}
+            >
+              {year}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
