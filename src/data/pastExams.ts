@@ -12,6 +12,15 @@ export interface PastExamSet {
 
 export const pastExamSets: PastExamSet[] = [
   {
+    id: 'fe-2022-sample',
+    label: '令和4年 公開問題セット',
+    year: 2022,
+    season: 'Autumn',
+    sourceUrl: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html',
+    questionPdfUrl: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04h_fe_pm_qs.pdf',
+    answerPdfUrl: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04h_fe_pm_ans.pdf',
+  },
+  {
     id: 'fe-2025-sample',
     label: '令和7年 公開問題セット',
     year: 2025,
@@ -41,6 +50,40 @@ export const pastExamSets: PastExamSet[] = [
 ];
 
 export const pastExamQuestionDatabase: Record<string, Question[]> = {
+  'fe-2022-sample': [
+    {
+      id: 9201,
+      question: 'OSI参照モデルでトランスポート層に該当するプロトコルはどれか。',
+      answers: ['IP', 'TCP', 'ARP', 'ICMP'],
+      correct: 1,
+      explanation: 'TCPはトランスポート層で動作する代表的なプロトコル。',
+      source: { setId: 'fe-2022-sample', label: '令和4年 公開問題', year: 2022, questionNo: 'Q1', url: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html' },
+    },
+    {
+      id: 9202,
+      question: '二分探索法の前提条件として適切なものはどれか。',
+      answers: ['データがランダムである', 'データが昇順または降順に整列済みである', 'データ件数が奇数である', '配列である必要はない'],
+      correct: 1,
+      explanation: '二分探索は比較範囲を半分に絞るため整列済みである必要がある。',
+      source: { setId: 'fe-2022-sample', label: '令和4年 公開問題', year: 2022, questionNo: 'Q2', url: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html' },
+    },
+    {
+      id: 9203,
+      question: 'データベースの外部キーの役割として適切なものはどれか。',
+      answers: ['表内の行を一意に識別する', '他表との参照整合性を保つ', '索引を高速化する', 'トランザクションを管理する'],
+      correct: 1,
+      explanation: '外部キーは他表の主キーを参照し整合性を維持する。',
+      source: { setId: 'fe-2022-sample', label: '令和4年 公開問題', year: 2022, questionNo: 'Q3', url: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html' },
+    },
+    {
+      id: 9204,
+      question: 'XSS対策として適切なものはどれか。',
+      answers: ['SQLを暗号化する', '出力時にHTMLエスケープする', 'IPアドレスを固定する', 'TLS証明書を更新する'],
+      correct: 1,
+      explanation: 'XSSはブラウザでのスクリプト実行が問題のため、出力時のエスケープが有効。',
+      source: { setId: 'fe-2022-sample', label: '令和4年 公開問題', year: 2022, questionNo: 'Q4', url: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html' },
+    },
+  ],
   'fe-2025-sample': [
     {
       id: 9501,

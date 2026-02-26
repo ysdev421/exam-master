@@ -2,6 +2,13 @@
 
 const catalog = [
   {
+    id: 'fe-2022-sample',
+    year: 2022,
+    sourcePage: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04.html',
+    questionPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04h_fe_pm_qs.pdf',
+    answerPdf: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2022r04h_fe_pm_ans.pdf',
+  },
+  {
     id: 'fe-2025-sample',
     year: 2025,
     sourcePage: 'https://www.ipa.go.jp/shiken/mondai-kaiotu/2025r07.html',
