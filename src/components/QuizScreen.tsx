@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ChevronRight, Trophy, Lightbulb, ExternalLink } from 'lucide-react';
 import type { Question, SessionMode } from '../types';
 
@@ -13,12 +14,21 @@ interface Props {
   sessionMode: SessionMode;
   timeLeftSec: number | null;
   timeLimitSec: number | null;
-  isReported: boolean;
+  reportReason: string | null;
   onAnswer: (index: number) => void;
   onNext: () => void;
   onToggleHint: () => void;
-  onToggleReport: () => void;
+  onReport: (reason: string) => void;
+  onClearReport: () => void;
 }
+
+const REPORT_REASONS = [
+  '著作権・出典の懸念',
+  '設問の誤り',
+  '選択肢の誤り',
+  '解説の誤り',
+  '難易度や品質に違和感',
+] as const;
 
 function formatTimer(sec: number) {
   const m = Math.floor(sec / 60);
@@ -38,12 +48,14 @@ export default function QuizScreen({
   sessionMode,
   timeLeftSec,
   timeLimitSec,
-  isReported,
+  reportReason,
   onAnswer,
   onNext,
   onToggleHint,
-  onToggleReport,
+  onReport,
+  onClearReport,
 }: Props) {
+  const [showReportMenu, setShowReportMenu] = useState(false);
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   return (
@@ -51,7 +63,7 @@ export default function QuizScreen({
       <div className="glass-card rounded-2xl p-5">
         <div className="flex flex-wrap justify-between items-center gap-2 mb-3 text-sm">
           <span className="font-bold text-cyan-200">Q{currentQuestionIndex + 1} / {totalQuestions}</span>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <span className="chip">{categoryName}</span>
             <span className="chip">{sessionMode === 'mock' ? 'Mock' : 'Practice'}</span>
             <span className="chip">Pattern {patternId}</span>
@@ -61,14 +73,48 @@ export default function QuizScreen({
                 {timeLimitSec !== null ? ` / ${formatTimer(timeLimitSec)}` : ''}
               </span>
             )}
-            <button onClick={onToggleReport} className={`chip ${isReported ? 'border-rose-300/70 text-rose-200' : ''}`}>
-              {isReported ? '報告済み' : '問題を報告'}
+            <button
+              onClick={() => setShowReportMenu(prev => !prev)}
+              className={`chip ${reportReason ? 'border-rose-300/70 text-rose-200' : ''}`}
+            >
+              {reportReason ? '報告済み' : '問題を報告'}
             </button>
           </div>
         </div>
         <div className="h-2.5 rounded-full bg-slate-700/45 overflow-hidden">
           <div className="h-full rounded-full bg-gradient-to-r from-teal-300 to-cyan-200 transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
+
+        {showReportMenu && (
+          <div className="mt-3 rounded-xl border border-rose-300/35 bg-rose-400/10 p-3 space-y-2">
+            <p className="text-xs text-rose-100">報告理由を選択してください</p>
+            <div className="flex flex-wrap gap-2">
+              {REPORT_REASONS.map((reason) => (
+                <button
+                  key={reason}
+                  onClick={() => {
+                    onReport(reason);
+                    setShowReportMenu(false);
+                  }}
+                  className={`chip ${reportReason === reason ? 'border-rose-300/70 text-rose-200' : ''}`}
+                >
+                  {reason}
+                </button>
+              ))}
+              {reportReason && (
+                <button
+                  onClick={() => {
+                    onClearReport();
+                    setShowReportMenu(false);
+                  }}
+                  className="chip"
+                >
+                  報告を取り消す
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="glass-card rounded-3xl p-6 md:p-8 space-y-6">
@@ -79,12 +125,7 @@ export default function QuizScreen({
             <p className="mt-3 text-xs text-slate-300 inline-flex items-center gap-1">
               出典: {currentQuestion.source.label} {currentQuestion.source.questionNo}
               {currentQuestion.source.url && (
-                <a
-                  href={currentQuestion.source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-cyan-200 hover:text-cyan-100"
-                >
+                <a href={currentQuestion.source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-cyan-200 hover:text-cyan-100">
                   <ExternalLink size={11} /> 参照
                 </a>
               )}
@@ -98,7 +139,6 @@ export default function QuizScreen({
             const isCorrect = idx === currentQuestion.correct;
             const showCorrect = answered && isCorrect;
             const showWrong = answered && isSelected && !isCorrect;
-
             return (
               <button
                 key={idx}

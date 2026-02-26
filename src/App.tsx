@@ -64,11 +64,12 @@ export default function App() {
               sessionMode={quiz.sessionMode}
               timeLeftSec={quiz.timeLeftSec}
               timeLimitSec={quiz.timeLimitSec}
-              isReported={quiz.reportedQuestionIds.includes(quiz.currentQuestion.id)}
+              reportReason={quiz.reportedQuestionReasons[quiz.currentQuestion.id] ?? null}
               onAnswer={quiz.handleAnswerClick}
               onNext={quiz.handleNextQuestion}
               onToggleHint={() => quiz.setShowHint(!quiz.showHint)}
-              onToggleReport={quiz.toggleReportCurrentQuestion}
+              onReport={quiz.setReportReasonForCurrentQuestion}
+              onClearReport={quiz.clearReportForCurrentQuestion}
             />
           )}
 
@@ -89,7 +90,7 @@ export default function App() {
               isTimeUp={quiz.isTimeUp}
               timeLimitSec={quiz.timeLimitSec}
               timeLeftSec={quiz.timeLeftSec}
-              reportedCount={quiz.reportedQuestionIds.length}
+              reportedCount={Object.keys(quiz.reportedQuestionReasons).length}
               weakQuestionCount={quiz.weakQuestionIds.length}
               onStartWeakCategory={quiz.handleStartCategory}
               onStartWeakDrill={quiz.handleStartWeakDrill}

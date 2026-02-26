@@ -8,7 +8,7 @@ const STORAGE_KEY = 'examquest-v1';
 const PATTERN_STORAGE_KEY = 'examquest-patterns-v1';
 const FIRST_QUESTION_STORAGE_KEY = 'examquest-first-question-v1';
 const RECENT_QUESTION_STORAGE_KEY = 'examquest-recent-questions-v1';
-const REPORTED_QUESTION_STORAGE_KEY = 'examquest-reported-questions-v1';
+const REPORTED_QUESTION_STORAGE_KEY = 'examquest-reported-question-reasons-v1';
 const WEAK_QUESTION_STORAGE_KEY = 'examquest-weak-questions-v1';
 
 const INITIAL_DATA: SavedData = {
@@ -50,6 +50,19 @@ function getPatternSignature(questions: Question[]): string {
   return ids.join('|');
 }
 
+function seasonLabel(season: 'Spring' | 'Autumn'): string {
+  return season === 'Spring' ? '春期' : '秋期';
+}
+
+function normalizePastExamLabel(setId: string): string {
+  const set = pastExamSets.find(s => s.id === setId);
+  if (!set) return setId;
+  const suffix = set.id.endsWith('_fe_am') ? '午前' : set.id.endsWith('_fe_pm') ? '午後' : '';
+  const eraYear = set.year - 2018;
+  const era = eraYear > 0 ? `令和${eraYear}年` : `${set.year}年`;
+  return `${era} ${seasonLabel(set.season)}${suffix ? ` ${suffix}` : ''} 基本情報`;
+}
+
 function uniqueRecentIds(prev: number[], next: number[]): number[] {
   const merged = [...prev, ...next];
   const deduped = merged.filter((id, index) => merged.indexOf(id) === index);
@@ -78,16 +91,14 @@ export function useQuiz() {
   const [recentPatternsByCategory, setRecentPatternsByCategory] = useLocalStorage<Record<string, string[]>>(PATTERN_STORAGE_KEY, {});
   const [recentFirstQuestionByCategory, setRecentFirstQuestionByCategory] = useLocalStorage<Record<string, number>>(FIRST_QUESTION_STORAGE_KEY, {});
   const [recentQuestionIdsByScope, setRecentQuestionIdsByScope] = useLocalStorage<Record<string, number[]>>(RECENT_QUESTION_STORAGE_KEY, {});
-  const [reportedQuestionIds, setReportedQuestionIds] = useLocalStorage<number[]>(REPORTED_QUESTION_STORAGE_KEY, []);
+  const [reportedQuestionReasons, setReportedQuestionReasons] = useLocalStorage<Record<number, string>>(REPORTED_QUESTION_STORAGE_KEY, {});
   const [weakQuestionIds, setWeakQuestionIds] = useLocalStorage<number[]>(WEAK_QUESTION_STORAGE_KEY, []);
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
   const level = Math.floor(savedData.totalScore / 50) + 1;
   const currentQuestions = sessionQuestions;
   const currentQuestion = currentQuestions[currentQuestionIndex] ?? null;
-  const selectedPastExamSetLabel = selectedPastExamSet
-    ? (pastExamSets.find(s => s.id === selectedPastExamSet)?.label ?? selectedPastExamSet)
-    : null;
+  const selectedPastExamSetLabel = selectedPastExamSet ? normalizePastExamLabel(selectedPastExamSet) : null;
 
   const finalizeSession = () => {
     if (isSessionFinalized) return;
@@ -268,9 +279,18 @@ export function useQuiz() {
     setIsSessionFinalized(false);
   };
 
-  const toggleReportCurrentQuestion = () => {
+  const setReportReasonForCurrentQuestion = (reason: string) => {
     if (!currentQuestion) return;
-    setReportedQuestionIds(prev => (prev.includes(currentQuestion.id) ? prev.filter(id => id !== currentQuestion.id) : [...prev, currentQuestion.id]));
+    setReportedQuestionReasons(prev => ({ ...prev, [currentQuestion.id]: reason }));
+  };
+
+  const clearReportForCurrentQuestion = () => {
+    if (!currentQuestion) return;
+    setReportedQuestionReasons(prev => {
+      const next = { ...prev };
+      delete next[currentQuestion.id];
+      return next;
+    });
   };
 
   const sessionAccuracy = useMemo(() => (currentQuestions.length > 0 ? Math.round((sessionCorrect / currentQuestions.length) * 100) : 0), [currentQuestions.length, sessionCorrect]);
@@ -299,7 +319,7 @@ export function useQuiz() {
     timeLimitSec,
     timeLeftSec,
     isTimeUp,
-    reportedQuestionIds,
+    reportedQuestionReasons,
     weakQuestionIds,
     handleAnswerClick,
     handleNextQuestion,
@@ -309,6 +329,7 @@ export function useQuiz() {
     handleStartWeakDrill,
     handleRetry,
     handleReset,
-    toggleReportCurrentQuestion,
+    setReportReasonForCurrentQuestion,
+    clearReportForCurrentQuestion,
   };
 }

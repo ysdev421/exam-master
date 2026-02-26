@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Sparkles, Library, ExternalLink, Timer } from 'lucide-react';
 import type { Category } from '../types';
 import { questionDatabase } from '../data/questions';
@@ -15,12 +15,38 @@ interface Props {
   weakQuestionCount: number;
 }
 
-function combinations(n: number, r: number) {
+function factorial(n: number): number {
+  if (n <= 1) return 1;
+  let result = 1;
+  for (let i = 2; i <= n; i += 1) result *= i;
+  return result;
+}
+
+function permutation(n: number, r: number): number {
   if (r > n || r <= 0) return 0;
   let result = 1;
-  const k = Math.min(r, n - r);
-  for (let i = 1; i <= k; i += 1) result = (result * (n - k + i)) / i;
-  return Math.floor(result);
+  for (let i = 0; i < r; i += 1) result *= n - i;
+  return result;
+}
+
+function estimateCategoryPatterns(totalQuestions: number): number {
+  const sessionSize = Math.min(6, totalQuestions);
+  if (sessionSize <= 0) return 0;
+  const orderPatterns = permutation(totalQuestions, sessionSize);
+  const answerPatternsPerQuestion = factorial(4);
+  const answerPatterns = answerPatternsPerQuestion ** sessionSize;
+  return orderPatterns * answerPatterns;
+}
+
+function seasonLabel(season: PastExamSet['season']): string {
+  return season === 'Spring' ? '春期' : '秋期';
+}
+
+function normalizePastExamLabel(set: PastExamSet): string {
+  const suffix = set.id.endsWith('_fe_am') ? '午前' : set.id.endsWith('_fe_pm') ? '午後' : '';
+  const eraYear = set.year - 2018;
+  const era = eraYear > 0 ? `令和${eraYear}年` : `${set.year}年`;
+  return `${era} ${seasonLabel(set.season)}${suffix ? ` ${suffix}` : ''} 基本情報`;
 }
 
 export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam, onStartMockExam, onStartWeakDrill, weakQuestionCount }: Props) {
@@ -40,12 +66,8 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
 
   const shownSets = useMemo(() => {
     let list = [...pastExamSets];
-    if (showReadyOnly) {
-      list = list.filter(set => (pastExamQuestionDatabase[set.id] ?? []).length > 0);
-    }
-    if (yearFilter !== 'all') {
-      list = list.filter(set => set.year === yearFilter);
-    }
+    if (showReadyOnly) list = list.filter(set => (pastExamQuestionDatabase[set.id] ?? []).length > 0);
+    if (yearFilter !== 'all') list = list.filter(set => set.year === yearFilter);
 
     list.sort((a, b) => {
       const ac = (pastExamQuestionDatabase[a.id] ?? []).length;
@@ -72,11 +94,7 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
           <p className="text-xs text-slate-300 mb-3">カテゴリ・過去問を横断して出題。時間切れで自動採点します。</p>
           <div className="flex flex-wrap gap-2">
             {[10, 20, 40].map((count) => (
-              <button
-                key={count}
-                onClick={() => onStartMockExam(count)}
-                className="chip hover:border-emerald-300/70 hover:text-emerald-100 transition"
-              >
+              <button key={count} onClick={() => onStartMockExam(count)} className="chip hover:border-emerald-300/70 hover:text-emerald-100 transition">
                 {count}問
               </button>
             ))}
@@ -102,7 +120,7 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {categories.map((cat) => {
             const total = (questionDatabase[cat.id] ?? []).length;
-            const patterns = combinations(total, Math.min(6, total));
+            const patterns = estimateCategoryPatterns(total);
             return (
               <button
                 key={cat.id}
@@ -134,20 +152,9 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setYearFilter('all')}
-            className={`chip ${yearFilter === 'all' ? 'border-cyan-300/80 text-cyan-200' : ''}`}
-          >
-            全年度
-          </button>
+          <button onClick={() => setYearFilter('all')} className={`chip ${yearFilter === 'all' ? 'border-cyan-300/80 text-cyan-200' : ''}`}>全年度</button>
           {years.map((year) => (
-            <button
-              key={year}
-              onClick={() => setYearFilter(year)}
-              className={`chip ${yearFilter === year ? 'border-cyan-300/80 text-cyan-200' : ''}`}
-            >
-              {year}
-            </button>
+            <button key={year} onClick={() => setYearFilter(year)} className={`chip ${yearFilter === year ? 'border-cyan-300/80 text-cyan-200' : ''}`}>{year}</button>
           ))}
         </div>
 
@@ -159,21 +166,16 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
               <button
                 key={set.id}
                 onClick={() => {
-                  if (isReady) {
-                    onSelectPastExam(set.id);
-                    return;
-                  }
-                  window.open(set.sourceUrl, '_blank', 'noopener,noreferrer');
+                  if (isReady) onSelectPastExam(set.id);
+                  else window.open(set.sourceUrl, '_blank', 'noopener,noreferrer');
                 }}
                 className={`glass-card rounded-2xl p-5 text-left border transition ${
-                  isReady
-                    ? 'border-amber-300/20 hover:border-amber-300/45 hover:-translate-y-0.5'
-                    : 'border-slate-500/30 hover:border-slate-400/60'
+                  isReady ? 'border-amber-300/20 hover:border-amber-300/45 hover:-translate-y-0.5' : 'border-slate-500/30 hover:border-slate-400/60'
                 }`}
               >
                 <p className="text-xs text-amber-200/90 mb-1">IPA公開問題ベース</p>
-                <h4 className="font-bold mb-1">{set.label}</h4>
-                <p className="text-xs text-slate-300 mb-1">年度: {set.year} / 区分: {set.season} / 収録: {count}問</p>
+                <h4 className="font-bold mb-1">{normalizePastExamLabel(set)}</h4>
+                <p className="text-xs text-slate-300 mb-1">年度: {set.year} / 区分: {seasonLabel(set.season)} / 収録: {count}問</p>
                 <p className="text-xs text-slate-400 inline-flex items-center gap-1">
                   <ExternalLink size={11} /> {isReady ? 'このセットで受験可能' : '未収録: 出典ページを開く'}
                 </p>
