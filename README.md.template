@@ -1,0 +1,178 @@
+# 📚 exam-quest
+
+複数の資格試験に対応した、ゲーム化された Web 学習プラットフォーム
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-0.1.0-brightgreen)
+![React](https://img.shields.io/badge/react-18.2-61dafb?logo=react)
+
+## ✨ 特徴
+
+- 🎮 **ゲーム化学習** - スコア、レベル、ストリーク機能で楽しく学習
+- 📱 **スマホ最適化** - どのデバイスでも快適に利用可能
+- 🎨 **ビジュアル図解** - 複雑な概念を視覚的に理解
+- 📊 **複数試験対応** - 基本情報から応用情報まで（拡張可能）
+- ⚡ **高速・軽量** - Vite + React で最高のパフォーマンス
+- 📖 **詳細解説** - 各問題に実例ベースの説明付き
+
+## 🚀 クイックスタート
+
+### インストール
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/yourusername/exam-quest.git
+cd exam-quest
+
+# 依存関係をインストール
+npm install
+
+# 開発サーバーを起動
+npm run dev
+```
+
+ブラウザで `http://localhost:3000` を開いて、学習開始！
+
+### ビルド
+
+```bash
+# 本番用ビルド
+npm run build
+
+# ビルド結果をプレビュー
+npm run preview
+```
+
+## 📚 サポートされている試験
+
+### 現在対応
+- ✅ **基本情報技術者試験** （午前試験）- 8分野、97問
+
+### 実装予定
+- 🔜 応用情報技術者試験
+- 🔜 ITパスポート
+- 🔜 情報セキュリティマネジメント試験
+- 🔜 各種プログラミング認定試験
+
+## 🎯 学習機能
+
+### コアシステム
+- 4択問題の出題・採点
+- リアルタイムスコア表示
+- レベルシステム
+- ストリーク機能（連続正解でボーナス）
+- 分野別カテゴリ選択
+- 進捗バー表示
+
+### 学習サポート
+- 詳細な問題解説
+- ビジュアル図解（12種類）
+- 分野ごとのカラーコーディング
+- レスポンシブデザイン
+
+## 🏗️ プロジェクト構造
+
+```
+exam-quest/
+├── src/
+│   ├── components/         # React コンポーネント
+│   ├── data/              # 問題データ
+│   ├── hooks/             # カスタムフック
+│   ├── utils/             # ユーティリティ関数
+│   ├── App.jsx
+│   └── main.jsx
+├── public/                # 静的ファイル
+├── docs/                  # ドキュメント
+├── package.json
+├── vite.config.js
+└── tailwind.config.js
+```
+
+## 💻 技術スタック
+
+- **フロントエンド**: React 18.x
+- **スタイリング**: Tailwind CSS
+- **ビルドツール**: Vite
+- **アイコン**: Lucide React
+- **状態管理**: Zustand（将来実装）
+- **テスト**: Vitest + React Testing Library
+
+## 🛠️ 開発ガイド
+
+### コード品質
+```bash
+# リント
+npm run lint
+
+# フォーマット
+npm run format
+
+# テスト実行
+npm run test
+```
+
+### Git ワークフロー
+1. `develop` ブランチから新しいブランチを作成
+2. 機能を実装
+3. テストを追加
+4. プルリクエストを作成
+5. レビュー後にマージ
+
+### ブランチ命名規則
+- `feature/機能名`
+- `fix/バグ名`
+- `docs/ドキュメント名`
+- `refactor/リファクタリング内容`
+
+## 📋 ロードマップ
+
+### Phase 1（次）
+- [ ] TypeScript化
+- [ ] コンポーネント分割
+- [ ] LocalStorage対応
+- [ ] 応用情報試験対応
+
+### Phase 2
+- [ ] ユーザーアカウント機能
+- [ ] 弱点分析ダッシュボード
+- [ ] 学習統計表示
+- [ ] ランキング機能
+
+### Phase 3
+- [ ] バックエンド構築
+- [ ] マルチデバイス同期
+- [ ] AI分析機能
+- [ ] ソーシャル機能
+
+詳細は [FEATURE_ROADMAP.md](./docs/FEATURE_ROADMAP.md) を参照
+
+## 🤝 貢献方法
+
+プルリクエストを歓迎します！
+
+1. このリポジトリをフォーク
+2. フィーチャーブランチを作成 (`git checkout -b feature/AmazingFeature`)
+3. 変更をコミット (`git commit -m 'Add some AmazingFeature'`)
+4. ブランチにプッシュ (`git push origin feature/AmazingFeature`)
+5. プルリクエストを作成
+
+詳細は [CONTRIBUTING.md](./CONTRIBUTING.md) を参照
+
+## 📝 ライセンス
+
+このプロジェクトは MIT ライセンスの下でライセンスされています。詳細は [LICENSE](./LICENSE) ファイルを参照してください。
+
+## 📧 問い合わせ
+
+質問やバグ報告は [GitHub Issues](https://github.com/yourusername/exam-quest/issues) で受け付けています。
+
+## 🙏 謝辞
+
+- [IPA（情報処理推進機構）](https://www.ipa.go.jp/) - 試験情報
+- React コミュニティ
+- Tailwind CSS チーム
+
+---
+
+**最後に更新**: 2025年2月26日
+**現在のバージョン**: v0.1.0

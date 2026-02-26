@@ -1,7 +1,7 @@
-import { useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { questionDatabase } from '../data/questions';
 import { useLocalStorage } from './useLocalStorage';
-import type { View, SavedData } from '../types';
+import type { View, SavedData, Question } from '../types';
 
 const STORAGE_KEY = 'examquest-v1';
 
@@ -14,6 +14,21 @@ const INITIAL_DATA: SavedData = {
 
 const QUESTIONS_PER_SESSION = 6;
 
+function shuffle<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function makePatternId(categoryId: string): string {
+  const now = Date.now().toString(36).toUpperCase();
+  const seed = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `${categoryId.slice(0, 3).toUpperCase()}-${now}-${seed}`;
+}
+
 export function useQuiz() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [score, setScore] = useState(0);
@@ -24,15 +39,14 @@ export function useQuiz() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showDiagram, setShowDiagram] = useState(false);
   const [sessionCorrect, setSessionCorrect] = useState(0);
+  const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
+  const [patternId, setPatternId] = useState('');
 
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
   const level = Math.floor(savedData.totalScore / 50) + 1;
 
-  const currentQuestions = selectedCategory
-    ? (questionDatabase[selectedCategory] ?? []).slice(0, QUESTIONS_PER_SESSION)
-    : [];
-
+  const currentQuestions = sessionQuestions;
   const currentQuestion = currentQuestions[currentQuestionIndex] ?? null;
 
   const handleAnswerClick = (index: number) => {
@@ -85,8 +99,13 @@ export function useQuiz() {
     }
   };
 
-  const handleStartCategory = (categoryId: string) => {
+  const startSession = (categoryId: string) => {
+    const pool = questionDatabase[categoryId] ?? [];
+    const picked = shuffle(pool).slice(0, QUESTIONS_PER_SESSION);
+
     setSelectedCategory(categoryId);
+    setSessionQuestions(picked);
+    setPatternId(makePatternId(categoryId));
     setCurrentView('quiz');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
@@ -97,9 +116,13 @@ export function useQuiz() {
     setShowDiagram(false);
   };
 
+  const handleStartCategory = (categoryId: string) => {
+    startSession(categoryId);
+  };
+
   const handleRetry = () => {
     if (!selectedCategory) return;
-    handleStartCategory(selectedCategory);
+    startSession(selectedCategory);
   };
 
   const handleReset = () => {
@@ -112,7 +135,14 @@ export function useQuiz() {
     setSessionCorrect(0);
     setSelectedCategory(null);
     setShowDiagram(false);
+    setSessionQuestions([]);
+    setPatternId('');
   };
+
+  const sessionAccuracy = useMemo(
+    () => (currentQuestions.length > 0 ? Math.round((sessionCorrect / currentQuestions.length) * 100) : 0),
+    [currentQuestions.length, sessionCorrect],
+  );
 
   return {
     currentView,
@@ -120,6 +150,7 @@ export function useQuiz() {
     score,
     streak,
     sessionCorrect,
+    sessionAccuracy,
     currentQuestionIndex,
     selectedAnswer,
     answered,
@@ -130,6 +161,7 @@ export function useQuiz() {
     level,
     currentQuestions,
     currentQuestion,
+    patternId,
     handleAnswerClick,
     handleNextQuestion,
     handleStartCategory,
