@@ -56,16 +56,29 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {pastExamSets.map((set) => {
             const count = (pastExamQuestionDatabase[set.id] ?? []).length;
+            const isReady = count > 0;
             return (
               <button
                 key={set.id}
-                onClick={() => onSelectPastExam(set.id)}
-                className="glass-card rounded-2xl p-5 text-left border border-amber-300/20 hover:border-amber-300/45 hover:-translate-y-0.5 transition"
+                onClick={() => {
+                  if (isReady) {
+                    onSelectPastExam(set.id);
+                    return;
+                  }
+                  window.open(set.sourceUrl, '_blank', 'noopener,noreferrer');
+                }}
+                className={`glass-card rounded-2xl p-5 text-left border transition ${
+                  isReady
+                    ? 'border-amber-300/20 hover:border-amber-300/45 hover:-translate-y-0.5'
+                    : 'border-slate-500/30 hover:border-slate-400/60'
+                }`}
               >
                 <p className="text-xs text-amber-200/90 mb-1">IPA公開問題ベース</p>
                 <h4 className="font-bold mb-1">{set.label}</h4>
                 <p className="text-xs text-slate-300 mb-1">年度: {set.year} / 区分: {set.season} / 収録: {count}問</p>
-                <p className="text-xs text-slate-400 inline-flex items-center gap-1"><ExternalLink size={11} /> 出典ページあり</p>
+                <p className="text-xs text-slate-400 inline-flex items-center gap-1">
+                  <ExternalLink size={11} /> {isReady ? 'このセットで受験可能' : '未収録: 出典ページを開く'}
+                </p>
               </button>
             );
           })}

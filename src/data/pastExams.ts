@@ -1,4 +1,5 @@
 ﻿import type { Question } from '../types';
+import { generatedPastExamSets } from './pastExamSetsGenerated';
 
 export interface PastExamSet {
   id: string;
@@ -11,6 +12,7 @@ export interface PastExamSet {
 }
 
 export const pastExamSets: PastExamSet[] = [
+  ...generatedPastExamSets,
   {
     id: 'fe-2022-sample',
     label: '令和4年 公開問題セット',
@@ -188,3 +190,4 @@ export const pastExamQuestionDatabase: Record<string, Question[]> = {
     },
   ],
 };
+

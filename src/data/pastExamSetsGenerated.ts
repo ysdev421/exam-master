@@ -1,4 +1,6 @@
-[
+import type { PastExamSet } from './pastExams';
+
+export const generatedPastExamSets: PastExamSet[] = [
   {
     "id": "fe-2019r01a_fe_pm",
     "label": "2019? FE ???? 2019r01a_fe_pm",
@@ -395,4 +397,4 @@
     "questionPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_am_qs.pdf",
     "answerPdfUrl": "https://www.ipa.go.jp/shiken/mondai-kaiotu/gmcbt8000000f3yi-att/2009h21a_fe_am_ans.pdf"
   }
-]
+];
