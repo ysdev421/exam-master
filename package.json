@@ -1,13 +1,14 @@
 {
   "name": "exam-quest",
   "version": "0.1.0",
-  "description": "複数の資格試験に対応した、ゲーム化された Web 学習プラットフォーム",
+  "description": "隍・焚縺ｮ雉・ｼ隧ｦ鬨薙↓蟇ｾ蠢懊＠縺溘√ご繝ｼ繝蛹悶＆繧後◆ Web 蟄ｦ鄙偵・繝ｩ繝・ヨ繝輔か繝ｼ繝",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext .js,.jsx"
+    "lint": "eslint src --ext .js,.jsx",
+    "catalog:past": "node scripts/generatePastExamCatalog.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.263.1",
