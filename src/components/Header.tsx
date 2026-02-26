@@ -9,6 +9,11 @@ interface Props {
 }
 
 export default function Header({ totalScore, level, streak, showBack, onBack }: Props) {
+  const pointsPerLevel = 50;
+  const currentLevelPoints = totalScore % pointsPerLevel;
+  const nextLevelIn = pointsPerLevel - currentLevelPoints;
+  const levelProgress = Math.round((currentLevelPoints / pointsPerLevel) * 100);
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-700/50 bg-slate-950/55 backdrop-blur-lg">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
@@ -16,6 +21,18 @@ export default function Header({ totalScore, level, streak, showBack, onBack }: 
           <div className="pill"><Zap size={14} className="text-amber-300" /> Lv.{level}</div>
           <div className="pill"><Trophy size={14} className="text-cyan-300" /> {totalScore.toLocaleString()} pt</div>
           {streak > 0 && <div className="pill"><TrendingUp size={14} className="text-emerald-300" /> {streak} streak</div>}
+        </div>
+        <div className="min-w-[150px] sm:min-w-[190px] rounded-xl border border-slate-600/40 bg-slate-900/60 px-3 py-2">
+          <div className="flex items-center justify-between text-[11px] text-slate-300 mb-1">
+            <span>次Lvまで</span>
+            <span>{nextLevelIn}pt</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-slate-700/60 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-emerald-300 to-cyan-300 transition-all duration-500"
+              style={{ width: `${levelProgress}%` }}
+            />
+          </div>
         </div>
         {showBack && (
           <button onClick={onBack} className="text-xs text-slate-300 hover:text-white transition">
