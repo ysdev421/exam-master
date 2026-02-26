@@ -1,4 +1,4 @@
-import { RotateCcw, RefreshCw, ShieldCheck, Timer } from 'lucide-react';
+import { RotateCcw, RefreshCw, ShieldCheck, Timer, TrendingUp } from 'lucide-react';
 import type { SessionRecord, SessionMode } from '../types';
 import { categories } from '../data/categories';
 
@@ -41,6 +41,16 @@ function estimatePassProbability(sessionAccuracy: number, categoryAccuracy: numb
   return clamp(Math.round((1 / (1 + Math.exp(-x))) * 100), 1, 99);
 }
 
+function calculateWindowAccuracy(history: SessionRecord[], days: number, fallback: number): number {
+  const now = Date.now();
+  const threshold = now - days * 24 * 60 * 60 * 1000;
+  const inWindow = history.filter(item => new Date(item.date).getTime() >= threshold);
+  const total = inWindow.reduce((sum, row) => sum + row.total, 0);
+  const correct = inWindow.reduce((sum, row) => sum + row.correct, 0);
+  if (total === 0) return fallback;
+  return Math.round((correct / total) * 100);
+}
+
 export default function ResultScreen({
   score,
   sessionCorrect,
@@ -65,6 +75,8 @@ export default function ResultScreen({
   const accuracy = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
   const totalAccuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
   const consumedSec = timeLimitSec !== null && timeLeftSec !== null ? Math.max(timeLimitSec - timeLeftSec, 0) : null;
+  const accuracy7d = calculateWindowAccuracy(history, 7, totalAccuracy);
+  const accuracy30d = calculateWindowAccuracy(history, 30, totalAccuracy);
 
   const categoryHistory = selectedCategory ? history.filter(record => record.category === selectedCategory).slice(0, 6) : [];
   const categoryAnswered = categoryHistory.reduce((sum, row) => sum + row.total, 0);
@@ -77,8 +89,8 @@ export default function ResultScreen({
       const rows = history.filter(row => row.category === cat.id).slice(0, 6);
       const answered = rows.reduce((sum, row) => sum + row.total, 0);
       const correct = rows.reduce((sum, row) => sum + row.correct, 0);
-      const score = answered > 0 ? Math.round((correct / answered) * 100) : null;
-      return { id: cat.id, name: cat.name, score };
+      const categoryScore = answered > 0 ? Math.round((correct / answered) * 100) : null;
+      return { id: cat.id, name: cat.name, score: categoryScore };
     })
     .filter(item => item.score !== null) as Array<{ id: string; name: string; score: number }>;
 
@@ -104,6 +116,11 @@ export default function ResultScreen({
             <p className="text-xs text-slate-400">{s.label}</p>
           </div>
         ))}
+      </section>
+
+      <section className="glass-card rounded-2xl p-5 space-y-2">
+        <h3 className="font-bold inline-flex items-center gap-2"><TrendingUp size={16} /> 直近推移</h3>
+        <p className="text-sm text-slate-300">7日: {accuracy7d}% / 30日: {accuracy30d}% / 累計: {totalAccuracy}%</p>
       </section>
 
       {sessionMode === 'mock' && consumedSec !== null && (
