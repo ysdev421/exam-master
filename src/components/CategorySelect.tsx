@@ -21,6 +21,7 @@ interface Props {
   dueReviewCount: number;
   onExportData: () => void;
   onImportData: (file: File) => Promise<{ ok: boolean; message: string }>;
+  onResetAllData: () => void;
 }
 
 function combination(n: number, r: number): number {
@@ -72,6 +73,7 @@ export default function CategorySelect({
   dueReviewCount,
   onExportData,
   onImportData,
+  onResetAllData,
 }: Props) {
   const [showReadyOnly, setShowReadyOnly] = useState(false);
   const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
@@ -126,6 +128,18 @@ export default function CategorySelect({
                 }}
               />
             </label>
+            <button
+              onClick={() => {
+                const ok = window.confirm('学習データをすべて初期化します。元に戻せません。実行しますか？');
+                if (ok) {
+                  onResetAllData();
+                  setDataMessage('学習データを初期化しました。');
+                }
+              }}
+              className="chip border-rose-300/45 text-rose-200 hover:border-rose-300/80 hover:text-rose-100 transition"
+            >
+              全学習データを初期化
+            </button>
             {dataMessage && <span className="text-xs text-slate-300">{dataMessage}</span>}
           </div>
         </div>

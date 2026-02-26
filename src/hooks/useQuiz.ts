@@ -176,6 +176,35 @@ export function useQuiz() {
     }
   };
 
+  const resetAllLearningData = () => {
+    setSavedData(INITIAL_DATA);
+    setRecentPatternsByCategory({});
+    setRecentFirstQuestionByCategory({});
+    setRecentQuestionIdsByScope({});
+    setReportedQuestionReasons({});
+    setWeakQuestionIds([]);
+    setBookmarkQuestionIds([]);
+    setLearningTagByQuestionId({});
+    setReviewPlanByQuestionId({});
+    setCurrentView('categories');
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setAnswered(false);
+    setScore(0);
+    setStreak(0);
+    setSessionCorrect(0);
+    setSelectedCategory(null);
+    setSelectedPastExamSet(null);
+    setShowHint(false);
+    setSessionQuestions([]);
+    setPatternId('');
+    setSessionMode('practice');
+    setTimeLimitSec(null);
+    setTimeLeftSec(null);
+    setIsTimeUp(false);
+    setIsSessionFinalized(false);
+  };
+
   const level = Math.floor(savedData.totalScore / 50) + 1;
   const currentQuestions = sessionQuestions;
   const currentQuestion = currentQuestions[currentQuestionIndex] ?? null;
@@ -489,5 +518,6 @@ export function useQuiz() {
     setLearningTagForCurrentQuestion,
     exportLearningData,
     importLearningData,
+    resetAllLearningData,
   };
 }

@@ -66,6 +66,7 @@ export default function App() {
               dueReviewCount={quiz.dueReviewCount}
               onExportData={quiz.exportLearningData}
               onImportData={quiz.importLearningData}
+              onResetAllData={quiz.resetAllLearningData}
             />
           )}
 
