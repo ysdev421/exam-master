@@ -10,7 +10,11 @@ import ResultScreen from './components/ResultScreen';
 export default function App() {
   const quiz = useQuiz();
   const quizTitle = quiz.selectedPastExamSetLabel
-    ?? (quiz.selectedCategory === 'mock-all' ? '模擬試験' : categories.find(c => c.id === quiz.selectedCategory)?.name)
+    ?? (quiz.selectedCategory === 'mock-all'
+      ? '模擬試験'
+      : quiz.selectedCategory === 'weak-drill'
+      ? '苦手問題ドリル'
+      : categories.find(c => c.id === quiz.selectedCategory)?.name)
     ?? '';
 
   return (
@@ -42,6 +46,8 @@ export default function App() {
               onSelectCategory={quiz.handleStartCategory}
               onSelectPastExam={quiz.handleStartPastExam}
               onStartMockExam={quiz.handleStartMockExam}
+              onStartWeakDrill={quiz.handleStartWeakDrill}
+              weakQuestionCount={quiz.weakQuestionIds.length}
             />
           )}
 

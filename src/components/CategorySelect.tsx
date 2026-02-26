@@ -11,6 +11,8 @@ interface Props {
   onSelectCategory: (id: string) => void;
   onSelectPastExam: (setId: string) => void;
   onStartMockExam: (count: number) => void;
+  onStartWeakDrill: () => void;
+  weakQuestionCount: number;
 }
 
 function combinations(n: number, r: number) {
@@ -21,7 +23,7 @@ function combinations(n: number, r: number) {
   return Math.floor(result);
 }
 
-export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam, onStartMockExam }: Props) {
+export default function CategorySelect({ categories, pastExamSets, onSelectCategory, onSelectPastExam, onStartMockExam, onStartWeakDrill, weakQuestionCount }: Props) {
   const [showReadyOnly, setShowReadyOnly] = useState(false);
   const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
 
@@ -80,6 +82,19 @@ export default function CategorySelect({ categories, pastExamSets, onSelectCateg
             ))}
           </div>
         </div>
+        <button
+          onClick={onStartWeakDrill}
+          disabled={weakQuestionCount === 0}
+          className={`w-full glass-card rounded-2xl p-4 text-left border transition ${
+            weakQuestionCount > 0
+              ? 'border-rose-300/35 bg-rose-400/10 hover:border-rose-300/60'
+              : 'border-slate-600/30 bg-slate-800/30 opacity-60 cursor-not-allowed'
+          }`}
+        >
+          <p className="text-xs text-rose-200/90 mb-1">苦手問題ドリル</p>
+          <h3 className="font-bold">ミスした問題だけ再演習</h3>
+          <p className="text-xs text-slate-300 mt-1">登録数: {weakQuestionCount}問</p>
+        </button>
       </section>
 
       <section className="space-y-3">

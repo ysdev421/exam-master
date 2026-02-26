@@ -9,6 +9,7 @@ const PATTERN_STORAGE_KEY = 'examquest-patterns-v1';
 const FIRST_QUESTION_STORAGE_KEY = 'examquest-first-question-v1';
 const RECENT_QUESTION_STORAGE_KEY = 'examquest-recent-questions-v1';
 const REPORTED_QUESTION_STORAGE_KEY = 'examquest-reported-questions-v1';
+const WEAK_QUESTION_STORAGE_KEY = 'examquest-weak-questions-v1';
 
 const INITIAL_DATA: SavedData = {
   totalScore: 0,
@@ -78,6 +79,7 @@ export function useQuiz() {
   const [recentFirstQuestionByCategory, setRecentFirstQuestionByCategory] = useLocalStorage<Record<string, number>>(FIRST_QUESTION_STORAGE_KEY, {});
   const [recentQuestionIdsByScope, setRecentQuestionIdsByScope] = useLocalStorage<Record<string, number[]>>(RECENT_QUESTION_STORAGE_KEY, {});
   const [reportedQuestionIds, setReportedQuestionIds] = useLocalStorage<number[]>(REPORTED_QUESTION_STORAGE_KEY, []);
+  const [weakQuestionIds, setWeakQuestionIds] = useLocalStorage<number[]>(WEAK_QUESTION_STORAGE_KEY, []);
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
   const level = Math.floor(savedData.totalScore / 50) + 1;
@@ -140,9 +142,11 @@ export function useQuiz() {
       setStreak(prev => prev + 1);
       setSessionCorrect(prev => prev + 1);
       setSavedData(prev => ({ ...prev, totalScore: prev.totalScore + points, totalAnswered: prev.totalAnswered + 1, totalCorrect: prev.totalCorrect + 1 }));
+      setWeakQuestionIds(prev => prev.filter(id => id !== currentQuestion.id));
     } else {
       setStreak(0);
       setSavedData(prev => ({ ...prev, totalAnswered: prev.totalAnswered + 1 }));
+      setWeakQuestionIds(prev => (prev.includes(currentQuestion.id) ? prev : [...prev, currentQuestion.id]));
     }
   };
 
@@ -224,6 +228,14 @@ export function useQuiz() {
     startWithPool('mock-all', mergedPool, false, 'mock', questionCount, timeLimit);
   };
 
+  const handleStartWeakDrill = () => {
+    const pool = [...Object.values(questionDatabase).flat(), ...Object.values(pastExamQuestionDatabase).flat()];
+    const weakSet = new Set(weakQuestionIds);
+    const weakPool = pool.filter(q => weakSet.has(q.id));
+    if (weakPool.length === 0) return;
+    startWithPool('weak-drill', weakPool, false, 'practice', Math.min(QUESTIONS_PER_SESSION, weakPool.length), null);
+  };
+
   const handleRetry = () => {
     if (sessionMode === 'mock') {
       handleStartMockExam(mockQuestionCount);
@@ -288,11 +300,13 @@ export function useQuiz() {
     timeLeftSec,
     isTimeUp,
     reportedQuestionIds,
+    weakQuestionIds,
     handleAnswerClick,
     handleNextQuestion,
     handleStartCategory,
     handleStartPastExam,
     handleStartMockExam,
+    handleStartWeakDrill,
     handleRetry,
     handleReset,
     toggleReportCurrentQuestion,
