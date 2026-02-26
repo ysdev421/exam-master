@@ -19,7 +19,9 @@ interface Props {
   timeLimitSec: number | null;
   timeLeftSec: number | null;
   reportedCount: number;
+  weakQuestionCount: number;
   onStartWeakCategory: (categoryId: string) => void;
+  onStartWeakDrill: () => void;
   onRetry: () => void;
   onReset: () => void;
 }
@@ -68,7 +70,9 @@ export default function ResultScreen({
   timeLimitSec,
   timeLeftSec,
   reportedCount,
+  weakQuestionCount,
   onStartWeakCategory,
+  onStartWeakDrill,
   onRetry,
   onReset,
 }: Props) {
@@ -101,9 +105,7 @@ export default function ResultScreen({
       <section className="glass-card rounded-3xl p-7 text-center space-y-2">
         <p className="text-xs text-slate-400">Pattern {patternId}</p>
         <div className="text-5xl md:text-6xl font-black text-cyan-200">{score} pts</div>
-        <h2 className="text-xl md:text-2xl font-bold">
-          {sessionMode === 'mock' ? '模試セッション完了' : 'セッション完了'}
-        </h2>
+        <h2 className="text-xl md:text-2xl font-bold">{sessionMode === 'mock' ? '模試セッション完了' : 'セッション完了'}</h2>
         {sessionMode === 'mock' && isTimeUp && (
           <p className="text-sm text-amber-200 inline-flex items-center gap-1 justify-center"><Timer size={14} /> 時間切れで自動採点しました</p>
         )}
@@ -140,9 +142,16 @@ export default function ResultScreen({
         <section className="glass-card rounded-2xl p-5 space-y-3">
           <h3 className="font-bold">次にやるべき復習分野</h3>
           <p className="text-sm text-slate-300">{weakTop3.map((w, i) => `${i + 1}. ${w.name}(${w.score}%)`).join(' / ')}</p>
-          <button onClick={() => onStartWeakCategory(weakTop3[0].id)} className="btn-primary py-3">
-            最弱分野を復習する
-          </button>
+          <div className="space-y-2">
+            <button onClick={() => onStartWeakCategory(weakTop3[0].id)} className="btn-primary py-3">最弱分野を復習する</button>
+            <button
+              onClick={onStartWeakDrill}
+              disabled={weakQuestionCount === 0}
+              className={`btn-ghost py-3.5 ${weakQuestionCount === 0 ? 'opacity-60 cursor-not-allowed' : ''}`}
+            >
+              苦手問題ドリルを開始 ({weakQuestionCount}問)
+            </button>
+          </div>
         </section>
       )}
 

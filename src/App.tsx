@@ -90,7 +90,9 @@ export default function App() {
               timeLimitSec={quiz.timeLimitSec}
               timeLeftSec={quiz.timeLeftSec}
               reportedCount={quiz.reportedQuestionIds.length}
+              weakQuestionCount={quiz.weakQuestionIds.length}
               onStartWeakCategory={quiz.handleStartCategory}
+              onStartWeakDrill={quiz.handleStartWeakDrill}
               onRetry={quiz.handleRetry}
               onReset={quiz.handleReset}
             />
