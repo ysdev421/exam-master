@@ -1,5 +1,6 @@
 export type View = 'home' | 'categories' | 'quiz' | 'result';
 export type SessionMode = 'practice' | 'mock';
+export type LearningTag = 'unknown' | 'partial' | 'knew-but-missed' | 'careless';
 
 export interface QuestionSource {
   setId: string;
@@ -33,6 +34,7 @@ export interface SessionRecord {
   score: number;
   correct: number;
   total: number;
+  streak?: number;
 }
 
 export interface SavedData {

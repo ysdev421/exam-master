@@ -1,5 +1,5 @@
-import { RotateCcw, RefreshCw, ShieldCheck, Timer, TrendingUp } from 'lucide-react';
-import type { SessionRecord, SessionMode } from '../types';
+import { RotateCcw, RefreshCw, ShieldCheck, Timer, TrendingUp, Crown } from 'lucide-react';
+import type { LearningTag, SessionRecord, SessionMode } from '../types';
 import { categories } from '../data/categories';
 
 interface Props {
@@ -21,6 +21,8 @@ interface Props {
   reportedCount: number;
   reportSummary: Record<string, number>;
   weakQuestionCount: number;
+  learningTagCounts: Record<LearningTag, number>;
+  dueReviewCount: number;
   onStartWeakCategory: (categoryId: string) => void;
   onStartWeakDrill: () => void;
   onRetry: () => void;
@@ -54,6 +56,22 @@ function calculateWindowAccuracy(history: SessionRecord[], days: number, fallbac
   return Math.round((correct / total) * 100);
 }
 
+function scoreForCategory(records: SessionRecord[], categoryId: string): number | null {
+  const rows = records.filter(row => row.category === categoryId).slice(0, 12);
+  const answered = rows.reduce((sum, row) => sum + row.total, 0);
+  const correct = rows.reduce((sum, row) => sum + row.correct, 0);
+  return answered > 0 ? Math.round((correct / answered) * 100) : null;
+}
+
+function playerRank(totalScore: number, totalAccuracy: number): string {
+  const power = totalScore * 0.7 + totalAccuracy * 6;
+  if (power >= 2400) return 'Diamond';
+  if (power >= 1600) return 'Platinum';
+  if (power >= 1000) return 'Gold';
+  if (power >= 500) return 'Silver';
+  return 'Bronze';
+}
+
 export default function ResultScreen({
   score,
   sessionCorrect,
@@ -73,6 +91,8 @@ export default function ResultScreen({
   reportedCount,
   reportSummary,
   weakQuestionCount,
+  learningTagCounts,
+  dueReviewCount,
   onStartWeakCategory,
   onStartWeakDrill,
   onRetry,
@@ -92,29 +112,40 @@ export default function ResultScreen({
 
   const perCategory = categories
     .map(cat => {
-      const rows = history.filter(row => row.category === cat.id).slice(0, 6);
-      const answered = rows.reduce((sum, row) => sum + row.total, 0);
-      const correct = rows.reduce((sum, row) => sum + row.correct, 0);
-      const categoryScore = answered > 0 ? Math.round((correct / answered) * 100) : null;
-      return { id: cat.id, name: cat.name, score: categoryScore };
+      const totalScoreByCat = scoreForCategory(history, cat.id);
+      const score7d = scoreForCategory(
+        history.filter(row => (Date.now() - new Date(row.date).getTime()) <= 7 * 24 * 60 * 60 * 1000),
+        cat.id,
+      );
+      return {
+        id: cat.id,
+        name: cat.name,
+        icon: cat.icon,
+        score: totalScoreByCat,
+        score7d,
+      };
     })
-    .filter(item => item.score !== null) as Array<{ id: string; name: string; score: number }>;
+    .filter(item => item.score !== null) as Array<{ id: string; name: string; icon: string; score: number; score7d: number | null }>;
 
   const weakTop3 = [...perCategory].sort((a, b) => a.score - b.score).slice(0, 3);
+  const seasonStart = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const seasonSessions = history.filter(item => new Date(item.date).getTime() >= seasonStart);
+  const sessionRank = seasonSessions.filter(item => item.score > score).length + 1;
+  const rank = playerRank(totalScore, totalAccuracy);
 
   return (
     <div className="space-y-6 py-8 max-w-4xl mx-auto animate-fade-in">
       <section className="glass-card rounded-3xl p-7 text-center space-y-2">
         <p className="text-xs text-slate-400">Pattern {patternId}</p>
         <div className="text-5xl md:text-6xl font-black text-cyan-200">{score} pts</div>
-        <h2 className="text-xl md:text-2xl font-bold">{sessionMode === 'mock' ? '模試セッション完了' : 'セッション完了'}</h2>
+        <h2 className="text-xl md:text-2xl font-bold">{sessionMode === 'mock' ? '模擬試験セッション結果' : 'セッション結果'}</h2>
         {sessionMode === 'mock' && isTimeUp && (
           <p className="text-sm text-amber-200 inline-flex items-center gap-1 justify-center"><Timer size={14} /> 時間切れで自動採点しました</p>
         )}
       </section>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[{ label: '正答', value: `${sessionCorrect}/${sessionTotal}` }, { label: '正答率', value: `${accuracy}%` }, { label: '連続正解', value: `${streak}` }, { label: '合格予想', value: `${passProbability}%` }].map((s) => (
+        {[{ label: '正答数', value: `${sessionCorrect}/${sessionTotal}` }, { label: '正答率', value: `${accuracy}%` }, { label: '連続正解', value: `${streak}` }, { label: '合格推定', value: `${passProbability}%` }].map((s) => (
           <div key={s.label} className="glass-card rounded-xl p-4 text-center">
             <p className="text-xl font-bold text-cyan-200">{s.value}</p>
             <p className="text-xs text-slate-400">{s.label}</p>
@@ -123,13 +154,37 @@ export default function ResultScreen({
       </section>
 
       <section className="glass-card rounded-2xl p-5 space-y-2">
-        <h3 className="font-bold inline-flex items-center gap-2"><TrendingUp size={16} /> 直近推移</h3>
+        <h3 className="font-bold inline-flex items-center gap-2"><Crown size={16} /> ローカルランキング</h3>
+        <p className="text-sm text-slate-300">現在ランク: {rank} / 直近30日順位: {sessionRank}位 / 対象 {seasonSessions.length} セッション</p>
+      </section>
+
+      <section className="glass-card rounded-2xl p-5 space-y-2">
+        <h3 className="font-bold inline-flex items-center gap-2"><TrendingUp size={16} /> 成績推移</h3>
         <p className="text-sm text-slate-300">7日: {accuracy7d}% / 30日: {accuracy30d}% / 累計: {totalAccuracy}%</p>
       </section>
 
+      {perCategory.length > 0 && (
+        <section className="glass-card rounded-2xl p-5 space-y-3">
+          <h3 className="font-bold">分野別ダッシュボード</h3>
+          <div className="space-y-2">
+            {perCategory.map((item) => (
+              <div key={item.id} className="rounded-xl border border-slate-500/30 p-3">
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="inline-flex items-center gap-2">{item.icon} {item.name}</span>
+                  <span className="text-slate-300">直近7日 {item.score7d ?? '-'}% / 累計 {item.score}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-700/45 overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" style={{ width: `${item.score}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {sessionMode === 'mock' && consumedSec !== null && (
         <section className="glass-card rounded-2xl p-5 space-y-1">
-          <h3 className="font-bold">模試タイム</h3>
+          <h3 className="font-bold">模擬試験タイム</h3>
           <p className="text-sm text-slate-300">経過: {formatTimer(consumedSec)} / 制限: {timeLimitSec !== null ? formatTimer(timeLimitSec) : '-'}</p>
         </section>
       )}
@@ -151,11 +206,19 @@ export default function ResultScreen({
               disabled={weakQuestionCount === 0}
               className={`btn-ghost py-3.5 ${weakQuestionCount === 0 ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              苦手問題ドリルを開始 ({weakQuestionCount}問)
+              弱点復習ドリルを開始 ({weakQuestionCount}問)
             </button>
           </div>
         </section>
       )}
+
+      <section className="glass-card rounded-2xl p-5 space-y-2">
+        <h3 className="font-bold">ミス傾向と復習優先</h3>
+        <p className="text-sm text-slate-300">
+          全く分からない {learningTagCounts.unknown}問 / なんとなく {learningTagCounts.partial}問 / 分かっていたのにミス {learningTagCounts['knew-but-missed']}問 / ケアレスミス {learningTagCounts.careless}問
+        </p>
+        <p className="text-sm text-slate-300">期限到来レビュー: {dueReviewCount}問</p>
+      </section>
 
       <section className="glass-card rounded-2xl p-5">
         <p className="text-sm text-slate-300">Total Score: {totalScore.toLocaleString()} / Level: {level}</p>
@@ -163,7 +226,7 @@ export default function ResultScreen({
 
       <section className="glass-card rounded-2xl p-4 text-xs text-slate-300 inline-flex items-start gap-2 w-full">
         <ShieldCheck size={16} className="text-emerald-300 mt-0.5" />
-        <span>本サービスは学習支援の非公式コンテンツです。公式試験問題の転載は行わず、合否の保証は行いません。報告済み問題: {reportedCount}件</span>
+        <span>本サービスは学習者向けの参考コンテンツです。実際の試験問題とは形式差異があるため、最終確認は公式資料で行ってください。問題報告件数: {reportedCount}件</span>
       </section>
 
       {Object.keys(reportSummary).length > 0 && (

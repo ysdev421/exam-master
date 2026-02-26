@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { questionDatabase } from '../data/questions';
 import { pastExamQuestionDatabase, pastExamSets } from '../data/pastExams';
 import { useLocalStorage } from './useLocalStorage';
-import type { View, SavedData, Question, SessionMode } from '../types';
+import type { View, SavedData, Question, SessionMode, LearningTag } from '../types';
 
 const STORAGE_KEY = 'examquest-v1';
 const PATTERN_STORAGE_KEY = 'examquest-patterns-v1';
@@ -10,6 +10,9 @@ const FIRST_QUESTION_STORAGE_KEY = 'examquest-first-question-v1';
 const RECENT_QUESTION_STORAGE_KEY = 'examquest-recent-questions-v1';
 const REPORTED_QUESTION_STORAGE_KEY = 'examquest-reported-question-reasons-v1';
 const WEAK_QUESTION_STORAGE_KEY = 'examquest-weak-questions-v1';
+const BOOKMARK_QUESTION_STORAGE_KEY = 'examquest-bookmark-questions-v1';
+const LEARNING_TAG_STORAGE_KEY = 'examquest-learning-tags-v1';
+const REVIEW_PLAN_STORAGE_KEY = 'examquest-review-plan-v1';
 
 const INITIAL_DATA: SavedData = {
   totalScore: 0,
@@ -22,6 +25,17 @@ const QUESTIONS_PER_SESSION = 6;
 const DEFAULT_MOCK_QUESTIONS = 20;
 const MAX_RECENT_PATTERNS = 8;
 const MAX_RECENT_QUESTION_IDS = 50;
+const BACKUP_VERSION = 1;
+const LEARNING_TAGS: LearningTag[] = ['unknown', 'partial', 'knew-but-missed', 'careless'];
+
+type ReviewPlan = Record<number, { nextReviewAt: string; intervalDays: number }>;
+
+function nextReviewDays(tag: LearningTag): number {
+  if (tag === 'unknown') return 1;
+  if (tag === 'partial') return 3;
+  if (tag === 'knew-but-missed') return 2;
+  return 7;
+}
 
 function shuffle<T>(items: T[]): T[] {
   const arr = [...items];
@@ -93,14 +107,81 @@ export function useQuiz() {
   const [recentQuestionIdsByScope, setRecentQuestionIdsByScope] = useLocalStorage<Record<string, number[]>>(RECENT_QUESTION_STORAGE_KEY, {});
   const [reportedQuestionReasons, setReportedQuestionReasons] = useLocalStorage<Record<number, string>>(REPORTED_QUESTION_STORAGE_KEY, {});
   const [weakQuestionIds, setWeakQuestionIds] = useLocalStorage<number[]>(WEAK_QUESTION_STORAGE_KEY, []);
+  const [bookmarkQuestionIds, setBookmarkQuestionIds] = useLocalStorage<number[]>(BOOKMARK_QUESTION_STORAGE_KEY, []);
+  const [learningTagByQuestionId, setLearningTagByQuestionId] = useLocalStorage<Record<number, LearningTag>>(LEARNING_TAG_STORAGE_KEY, {});
+  const [reviewPlanByQuestionId, setReviewPlanByQuestionId] = useLocalStorage<ReviewPlan>(REVIEW_PLAN_STORAGE_KEY, {});
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
+
+  const exportLearningData = () => {
+    const payload = {
+      version: BACKUP_VERSION,
+      exportedAt: new Date().toISOString(),
+      data: {
+        savedData,
+        recentPatternsByCategory,
+        recentFirstQuestionByCategory,
+        recentQuestionIdsByScope,
+        reportedQuestionReasons,
+        weakQuestionIds,
+        bookmarkQuestionIds,
+        learningTagByQuestionId,
+        reviewPlanByQuestionId,
+      },
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `examquest-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
+  const importLearningData = async (file: File): Promise<{ ok: boolean; message: string }> => {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as {
+        version?: number;
+        data?: {
+          savedData?: SavedData;
+          recentPatternsByCategory?: Record<string, string[]>;
+          recentFirstQuestionByCategory?: Record<string, number>;
+          recentQuestionIdsByScope?: Record<string, number[]>;
+          reportedQuestionReasons?: Record<number, string>;
+          weakQuestionIds?: number[];
+          bookmarkQuestionIds?: number[];
+          learningTagByQuestionId?: Record<number, LearningTag>;
+          reviewPlanByQuestionId?: ReviewPlan;
+        };
+      };
+
+      if (parsed.version !== BACKUP_VERSION || !parsed.data) {
+        return { ok: false, message: 'バックアップ形式が不正です。' };
+      }
+
+      if (parsed.data.savedData) setSavedData(parsed.data.savedData);
+      setRecentPatternsByCategory(parsed.data.recentPatternsByCategory ?? {});
+      setRecentFirstQuestionByCategory(parsed.data.recentFirstQuestionByCategory ?? {});
+      setRecentQuestionIdsByScope(parsed.data.recentQuestionIdsByScope ?? {});
+      setReportedQuestionReasons(parsed.data.reportedQuestionReasons ?? {});
+      setWeakQuestionIds(parsed.data.weakQuestionIds ?? []);
+      setBookmarkQuestionIds(parsed.data.bookmarkQuestionIds ?? []);
+      setLearningTagByQuestionId(parsed.data.learningTagByQuestionId ?? {});
+      setReviewPlanByQuestionId(parsed.data.reviewPlanByQuestionId ?? {});
+      return { ok: true, message: '学習データを復元しました。' };
+    } catch {
+      return { ok: false, message: 'JSONの読み込みに失敗しました。' };
+    }
+  };
 
   const level = Math.floor(savedData.totalScore / 50) + 1;
   const currentQuestions = sessionQuestions;
   const currentQuestion = currentQuestions[currentQuestionIndex] ?? null;
   const selectedPastExamSetLabel = selectedPastExamSet ? normalizePastExamLabel(selectedPastExamSet) : null;
 
-  const finalizeSession = () => {
+  const finalizeSession = useCallback(() => {
     if (isSessionFinalized) return;
     setSavedData(prev => ({
       ...prev,
@@ -111,13 +192,14 @@ export function useQuiz() {
           score,
           correct: sessionCorrect,
           total: currentQuestions.length,
+          streak,
         },
         ...prev.history,
       ].slice(0, 20),
     }));
     setIsSessionFinalized(true);
     setCurrentView('result');
-  };
+  }, [isSessionFinalized, selectedPastExamSet, selectedCategory, score, sessionCorrect, currentQuestions.length, streak, setSavedData]);
 
   useEffect(() => {
     if (currentView !== 'quiz' || sessionMode !== 'mock' || timeLeftSec === null || timeLeftSec <= 0) return undefined;
@@ -133,13 +215,13 @@ export function useQuiz() {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [currentView, sessionMode, timeLeftSec]);
+  }, [currentView, sessionMode, timeLeftSec, finalizeSession]);
 
   useEffect(() => {
     if (currentView === 'quiz' && sessionMode === 'mock' && timeLeftSec === 0) {
       finalizeSession();
     }
-  }, [currentView, sessionMode, timeLeftSec]);
+  }, [currentView, sessionMode, timeLeftSec, finalizeSession]);
 
   const handleAnswerClick = (index: number) => {
     if (answered || !currentQuestion) return;
@@ -247,9 +329,26 @@ export function useQuiz() {
     startWithPool('weak-drill', weakPool, false, 'practice', Math.min(QUESTIONS_PER_SESSION, weakPool.length), null);
   };
 
+  const handleStartBookmarkDrill = () => {
+    const pool = [...Object.values(questionDatabase).flat(), ...Object.values(pastExamQuestionDatabase).flat()];
+    const bookmarkSet = new Set(bookmarkQuestionIds);
+    const bookmarkedPool = pool.filter(q => bookmarkSet.has(q.id));
+    if (bookmarkedPool.length === 0) return;
+    startWithPool('bookmark-drill', bookmarkedPool, false, 'practice', Math.min(QUESTIONS_PER_SESSION, bookmarkedPool.length), null);
+  };
+
   const handleRetry = () => {
     if (sessionMode === 'mock') {
       handleStartMockExam(mockQuestionCount);
+      return;
+    }
+    if (selectedCategory === 'due-review') {
+      handleStartDueReviewDrill();
+      return;
+    }
+    if (selectedCategory?.startsWith('tag-')) {
+      const tag = selectedCategory.slice(4) as LearningTag;
+      if (LEARNING_TAGS.includes(tag)) handleStartLearningTagDrill(tag);
       return;
     }
     if (selectedPastExamSet) {
@@ -293,6 +392,53 @@ export function useQuiz() {
     });
   };
 
+  const toggleBookmarkForCurrentQuestion = () => {
+    if (!currentQuestion) return;
+    setBookmarkQuestionIds(prev => (prev.includes(currentQuestion.id) ? prev.filter(id => id !== currentQuestion.id) : [...prev, currentQuestion.id]));
+  };
+
+  const setLearningTagForCurrentQuestion = (tag: LearningTag) => {
+    if (!currentQuestion) return;
+    const intervalDays = nextReviewDays(tag);
+    const nextReviewAt = new Date(Date.now() + intervalDays * 24 * 60 * 60 * 1000).toISOString();
+    setLearningTagByQuestionId(prev => ({ ...prev, [currentQuestion.id]: tag }));
+    setReviewPlanByQuestionId(prev => ({ ...prev, [currentQuestion.id]: { nextReviewAt, intervalDays } }));
+    if (tag === 'unknown' || tag === 'partial' || tag === 'knew-but-missed') {
+      setWeakQuestionIds(prev => (prev.includes(currentQuestion.id) ? prev : [...prev, currentQuestion.id]));
+    }
+    if (tag === 'careless') {
+      setWeakQuestionIds(prev => prev.filter(id => id !== currentQuestion.id));
+    }
+  };
+
+  const handleStartLearningTagDrill = (tag: LearningTag) => {
+    const pool = [...Object.values(questionDatabase).flat(), ...Object.values(pastExamQuestionDatabase).flat()];
+    const drillPool = pool.filter(q => learningTagByQuestionId[q.id] === tag);
+    if (drillPool.length === 0) return;
+    startWithPool(`tag-${tag}`, drillPool, false, 'practice', Math.min(QUESTIONS_PER_SESSION, drillPool.length), null);
+  };
+
+  const handleStartDueReviewDrill = () => {
+    const now = Date.now();
+    const dueIds = Object.entries(reviewPlanByQuestionId)
+      .filter(([, item]) => new Date(item.nextReviewAt).getTime() <= now)
+      .map(([id]) => Number(id));
+    if (dueIds.length === 0) return;
+    const dueSet = new Set(dueIds);
+    const pool = [...Object.values(questionDatabase).flat(), ...Object.values(pastExamQuestionDatabase).flat()];
+    const drillPool = pool.filter(q => dueSet.has(q.id));
+    if (drillPool.length === 0) return;
+    startWithPool('due-review', drillPool, false, 'practice', Math.min(QUESTIONS_PER_SESSION, drillPool.length), null);
+  };
+
+  const isCurrentQuestionBookmarked = currentQuestion ? bookmarkQuestionIds.includes(currentQuestion.id) : false;
+  const currentLearningTag = currentQuestion ? learningTagByQuestionId[currentQuestion.id] ?? null : null;
+  const learningTagCounts = LEARNING_TAGS.reduce<Record<LearningTag, number>>(
+    (acc, tag) => ({ ...acc, [tag]: Object.values(learningTagByQuestionId).filter(item => item === tag).length }),
+    { unknown: 0, partial: 0, 'knew-but-missed': 0, careless: 0 },
+  );
+  const dueReviewCount = Object.values(reviewPlanByQuestionId).filter(item => new Date(item.nextReviewAt).getTime() <= Date.now()).length;
+
   const sessionAccuracy = useMemo(() => (currentQuestions.length > 0 ? Math.round((sessionCorrect / currentQuestions.length) * 100) : 0), [currentQuestions.length, sessionCorrect]);
 
   return {
@@ -321,15 +467,27 @@ export function useQuiz() {
     isTimeUp,
     reportedQuestionReasons,
     weakQuestionIds,
+    bookmarkQuestionIds,
+    learningTagCounts,
+    dueReviewCount,
+    isCurrentQuestionBookmarked,
+    currentLearningTag,
     handleAnswerClick,
     handleNextQuestion,
     handleStartCategory,
     handleStartPastExam,
     handleStartMockExam,
     handleStartWeakDrill,
+    handleStartBookmarkDrill,
+    handleStartLearningTagDrill,
+    handleStartDueReviewDrill,
     handleRetry,
     handleReset,
     setReportReasonForCurrentQuestion,
     clearReportForCurrentQuestion,
+    toggleBookmarkForCurrentQuestion,
+    setLearningTagForCurrentQuestion,
+    exportLearningData,
+    importLearningData,
   };
 }

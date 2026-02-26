@@ -18,6 +18,12 @@ export default function App() {
       ? '模擬試験'
       : quiz.selectedCategory === 'weak-drill'
       ? '苦手問題ドリル'
+      : quiz.selectedCategory === 'bookmark-drill'
+      ? 'ブックマーク演習'
+      : quiz.selectedCategory === 'due-review'
+      ? '期限到来レビュー'
+      : quiz.selectedCategory?.startsWith('tag-')
+      ? '理解度別ドリル'
       : categories.find(c => c.id === quiz.selectedCategory)?.name)
     ?? '';
 
@@ -51,7 +57,15 @@ export default function App() {
               onSelectPastExam={quiz.handleStartPastExam}
               onStartMockExam={quiz.handleStartMockExam}
               onStartWeakDrill={quiz.handleStartWeakDrill}
+              onStartBookmarkDrill={quiz.handleStartBookmarkDrill}
+              onStartLearningTagDrill={quiz.handleStartLearningTagDrill}
+              onStartDueReviewDrill={quiz.handleStartDueReviewDrill}
               weakQuestionCount={quiz.weakQuestionIds.length}
+              bookmarkQuestionCount={quiz.bookmarkQuestionIds.length}
+              learningTagCounts={quiz.learningTagCounts}
+              dueReviewCount={quiz.dueReviewCount}
+              onExportData={quiz.exportLearningData}
+              onImportData={quiz.importLearningData}
             />
           )}
 
@@ -69,11 +83,15 @@ export default function App() {
               timeLeftSec={quiz.timeLeftSec}
               timeLimitSec={quiz.timeLimitSec}
               reportReason={quiz.reportedQuestionReasons[quiz.currentQuestion.id] ?? null}
+              learningTag={quiz.currentLearningTag}
+              isBookmarked={quiz.isCurrentQuestionBookmarked}
+              onToggleBookmark={quiz.toggleBookmarkForCurrentQuestion}
               onAnswer={quiz.handleAnswerClick}
               onNext={quiz.handleNextQuestion}
               onToggleHint={() => quiz.setShowHint(!quiz.showHint)}
               onReport={quiz.setReportReasonForCurrentQuestion}
               onClearReport={quiz.clearReportForCurrentQuestion}
+              onSetLearningTag={quiz.setLearningTagForCurrentQuestion}
             />
           )}
 
@@ -97,6 +115,8 @@ export default function App() {
               reportedCount={Object.keys(quiz.reportedQuestionReasons).length}
               reportSummary={reportSummary}
               weakQuestionCount={quiz.weakQuestionIds.length}
+              learningTagCounts={quiz.learningTagCounts}
+              dueReviewCount={quiz.dueReviewCount}
               onStartWeakCategory={quiz.handleStartCategory}
               onStartWeakDrill={quiz.handleStartWeakDrill}
               onRetry={quiz.handleRetry}

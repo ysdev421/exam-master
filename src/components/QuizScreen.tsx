@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ChevronRight, Trophy, Lightbulb, ExternalLink } from 'lucide-react';
-import type { Question, SessionMode } from '../types';
+import { ChevronRight, Trophy, Lightbulb, ExternalLink, Bookmark } from 'lucide-react';
+import type { LearningTag, Question, SessionMode } from '../types';
 
 interface Props {
   currentQuestion: Question;
@@ -15,11 +15,15 @@ interface Props {
   timeLeftSec: number | null;
   timeLimitSec: number | null;
   reportReason: string | null;
+  learningTag: LearningTag | null;
+  isBookmarked: boolean;
+  onToggleBookmark: () => void;
   onAnswer: (index: number) => void;
   onNext: () => void;
   onToggleHint: () => void;
   onReport: (reason: string) => void;
   onClearReport: () => void;
+  onSetLearningTag: (tag: LearningTag) => void;
 }
 
 const REPORT_REASONS = [
@@ -27,13 +31,31 @@ const REPORT_REASONS = [
   '設問の誤り',
   '選択肢の誤り',
   '解説の誤り',
-  '難易度や品質に違和感',
+  '難易度が本試験と乖離',
 ] as const;
+
+const LEARNING_TAG_LABELS: Record<LearningTag, string> = {
+  unknown: '全く分からない',
+  partial: 'なんとなく分かる',
+  'knew-but-missed': '分かっていたのにミス',
+  careless: 'ケアレスミス',
+};
 
 function formatTimer(sec: number) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function buildSmartHint(question: Question): string {
+  if (question.hint) return question.hint;
+  const q = question.question;
+  if (/計算量|探索|ソート/.test(q)) return 'まずデータ件数 n を増やしたとき、比較回数がどう増えるかを考える。';
+  if (/2進数|10進数|変換/.test(q)) return '各桁の重み（1, 2, 4, 8...）に注目して、1の立っている桁だけを足し合わせる。';
+  if (/OSI|TCP|IP|ARP|DNS|DHCP|ICMP|LAN|CIDR|サブネット/.test(q)) return '層・用途・変換対象（名前/アドレス）を1つずつ切り分けて消去法で絞る。';
+  if (/SQL|トランザクション|ACID|外部キー|正規化|JOIN/.test(q)) return 'DB用語の定義を先に確認し、「整合性」「重複排除」「結合条件」のどれが主題かを特定する。';
+  if (/XSS|CSRF|インジェクション|暗号|公開鍵|秘密鍵|認証/.test(q)) return '攻撃対象が「入力」「出力」「認証」のどこかを見極めると対策を選びやすい。';
+  return '設問のキーワードを先に拾い、各選択肢を1つずつ「定義として正しいか」で判定する。';
 }
 
 export default function QuizScreen({
@@ -49,11 +71,15 @@ export default function QuizScreen({
   timeLeftSec,
   timeLimitSec,
   reportReason,
+  learningTag,
+  isBookmarked,
+  onToggleBookmark,
   onAnswer,
   onNext,
   onToggleHint,
   onReport,
   onClearReport,
+  onSetLearningTag,
 }: Props) {
   const [showReportMenu, setShowReportMenu] = useState(false);
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
@@ -73,6 +99,9 @@ export default function QuizScreen({
                 {timeLimitSec !== null ? ` / ${formatTimer(timeLimitSec)}` : ''}
               </span>
             )}
+            <button onClick={onToggleBookmark} className={`chip ${isBookmarked ? 'border-amber-300/80 text-amber-200' : ''}`}>
+              <Bookmark size={12} /> {isBookmarked ? '保存済み' : '保存'}
+            </button>
             <button
               onClick={() => setShowReportMenu(prev => !prev)}
               className={`chip ${reportReason ? 'border-rose-300/70 text-rose-200' : ''}`}
@@ -169,17 +198,31 @@ export default function QuizScreen({
           <div className="rounded-2xl border border-slate-500/35 bg-slate-900/45 p-5">
             <p className="font-bold mb-1">{selectedAnswer === currentQuestion.correct ? '正解' : '不正解'}</p>
             <p className="text-sm text-slate-300 leading-relaxed">{currentQuestion.explanation}</p>
+            <div className="mt-3 space-y-2">
+              <p className="text-xs text-slate-300">この問題の理解度を記録</p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(LEARNING_TAG_LABELS).map(([tag, label]) => (
+                  <button
+                    key={tag}
+                    onClick={() => onSetLearningTag(tag as LearningTag)}
+                    className={`chip ${learningTag === tag ? 'border-cyan-300/80 text-cyan-200' : ''}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
         {!answered && (
           <div className="rounded-2xl border border-amber-300/35 bg-amber-300/10 p-4">
             <button onClick={onToggleHint} className="inline-flex items-center gap-2 text-sm font-bold text-amber-100">
-              <Lightbulb size={16} /> {showHint ? 'ヒントを隠す' : 'ヒントを見る'}
+              <Lightbulb size={16} /> {showHint ? 'ヒントを閉じる' : 'ヒントを見る'}
             </button>
             {showHint && (
               <p className="mt-2 text-sm text-slate-200 leading-relaxed">
-                {currentQuestion.hint ?? '問題文のキーワードを先に拾って、選択肢を消去法で絞ると安定します。'}
+                {buildSmartHint(currentQuestion)}
               </p>
             )}
           </div>
