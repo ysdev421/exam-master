@@ -4,6 +4,8 @@ import { useLocalStorage } from './useLocalStorage';
 import type { View, SavedData, Question } from '../types';
 
 const STORAGE_KEY = 'examquest-v1';
+const PATTERN_STORAGE_KEY = 'examquest-patterns-v1';
+const FIRST_QUESTION_STORAGE_KEY = 'examquest-first-question-v1';
 
 const INITIAL_DATA: SavedData = {
   totalScore: 0,
@@ -42,7 +44,8 @@ function shuffleAnswers(question: Question): Question {
 }
 
 function getPatternSignature(questions: Question[]): string {
-  return questions.map(q => `${q.id}:${q.correct}`).join('|');
+  const ids = questions.map(q => q.id).sort((a, b) => a - b);
+  return ids.join('|');
 }
 
 export function useQuiz() {
@@ -57,7 +60,14 @@ export function useQuiz() {
   const [sessionCorrect, setSessionCorrect] = useState(0);
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
   const [patternId, setPatternId] = useState('');
-  const [recentPatternsByCategory, setRecentPatternsByCategory] = useState<Record<string, string[]>>({});
+  const [recentPatternsByCategory, setRecentPatternsByCategory] = useLocalStorage<Record<string, string[]>>(
+    PATTERN_STORAGE_KEY,
+    {},
+  );
+  const [recentFirstQuestionByCategory, setRecentFirstQuestionByCategory] = useLocalStorage<Record<string, number>>(
+    FIRST_QUESTION_STORAGE_KEY,
+    {},
+  );
 
   const [savedData, setSavedData] = useLocalStorage<SavedData>(STORAGE_KEY, INITIAL_DATA);
 
@@ -125,13 +135,21 @@ export function useQuiz() {
     let signature = '';
     let attempts = 0;
 
+    const previousFirstId = recentFirstQuestionByCategory[categoryId] ?? null;
+
     do {
       picked = shuffle(pool)
         .slice(0, QUESTIONS_PER_SESSION)
         .map(question => shuffleAnswers(question));
       signature = getPatternSignature(picked);
       attempts += 1;
-    } while (recent.includes(signature) && attempts < 20);
+    } while (
+      attempts < 40 &&
+      (
+        recent.includes(signature) ||
+        (previousFirstId !== null && picked[0]?.id === previousFirstId)
+      )
+    );
 
     setSelectedCategory(categoryId);
     setSessionQuestions(picked);
@@ -140,6 +158,9 @@ export function useQuiz() {
       const next = [signature, ...(prev[categoryId] ?? []).filter(item => item !== signature)].slice(0, MAX_RECENT_PATTERNS);
       return { ...prev, [categoryId]: next };
     });
+    if (picked[0]) {
+      setRecentFirstQuestionByCategory(prev => ({ ...prev, [categoryId]: picked[0].id }));
+    }
     setCurrentView('quiz');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
