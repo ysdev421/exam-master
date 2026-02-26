@@ -45,7 +45,6 @@ export default function App() {
               answered={quiz.answered}
               showDiagram={quiz.showDiagram}
               patternId={quiz.patternId}
-              selectedCategory={quiz.selectedCategory}
               onAnswer={quiz.handleAnswerClick}
               onNext={quiz.handleNextQuestion}
               onToggleDiagram={() => quiz.setShowDiagram(!quiz.showDiagram)}
@@ -65,6 +64,7 @@ export default function App() {
               history={quiz.savedData.history}
               patternId={quiz.patternId}
               selectedCategory={quiz.selectedCategory}
+              onStartWeakCategory={quiz.handleStartCategory}
               onRetry={quiz.handleRetry}
               onReset={quiz.handleReset}
             />

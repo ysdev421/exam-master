@@ -14,6 +14,7 @@ interface Props {
   history: SessionRecord[];
   patternId: string;
   selectedCategory: string | null;
+  onStartWeakCategory: (categoryId: string) => void;
   onRetry: () => void;
   onReset: () => void;
 }
@@ -55,6 +56,7 @@ export default function ResultScreen({
   history,
   patternId,
   selectedCategory,
+  onStartWeakCategory,
   onRetry,
   onReset,
 }: Props) {
@@ -129,6 +131,12 @@ export default function ResultScreen({
               <p className="text-xs text-slate-300">
                 {weakTop3.map((w, i) => `${i + 1}. ${w.name}(${w.score}%)`).join(' / ')}
               </p>
+              <button
+                onClick={() => onStartWeakCategory(weakTop3[0].id)}
+                className="mt-3 rounded-lg px-3 py-2 text-xs font-bold text-slate-950 bg-cyan-200 hover:bg-cyan-100 transition"
+              >
+                最弱分野を今すぐ復習
+              </button>
             </div>
           )}
         </div>
