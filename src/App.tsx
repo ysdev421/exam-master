@@ -1,6 +1,8 @@
-﻿import { useQuiz } from './hooks/useQuiz';
+﻿import { useEffect } from 'react';
+import { useQuiz } from './hooks/useQuiz';
 import { categories } from './data/categories';
 import { pastExamSets } from './data/pastExams';
+import { activeExam } from './config/exams';
 import Header from './components/Header';
 import HomeView from './components/HomeView';
 import CategorySelect from './components/CategorySelect';
@@ -9,6 +11,15 @@ import ResultScreen from './components/ResultScreen';
 
 export default function App() {
   const quiz = useQuiz();
+
+  useEffect(() => {
+    document.title = activeExam.seoTitle;
+    const descriptionTag = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (descriptionTag) {
+      descriptionTag.setAttribute('content', activeExam.seoDescription);
+    }
+  }, []);
+
   const reportSummary = Object.values(quiz.reportedQuestionReasons).reduce<Record<string, number>>((acc, reason) => {
     acc[reason] = (acc[reason] ?? 0) + 1;
     return acc;
@@ -47,7 +58,7 @@ export default function App() {
         )}
 
         <div className="max-w-6xl mx-auto px-4 py-5 md:py-7">
-          {quiz.currentView === 'home' && <HomeView onStart={() => quiz.setCurrentView('categories')} />}
+          {quiz.currentView === 'home' && <HomeView onStart={() => quiz.setCurrentView('categories')} exam={activeExam} />}
 
           {quiz.currentView === 'categories' && (
             <CategorySelect

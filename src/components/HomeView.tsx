@@ -1,19 +1,21 @@
 ﻿import { ChevronRight, ShieldCheck, BookOpenCheck, Sparkles } from 'lucide-react';
+import type { ExamConfig } from '../config/exams';
 
 interface Props {
   onStart: () => void;
+  exam: ExamConfig;
 }
 
-export default function HomeView({ onStart }: Props) {
+export default function HomeView({ onStart, exam }: Props) {
   return (
     <div className="space-y-8 py-10 animate-fade-in">
       <section className="glass-card rounded-3xl p-8 md:p-10 text-center space-y-5">
         <p className="inline-flex items-center gap-2 rounded-full px-3 py-1 border border-cyan-300/35 bg-cyan-300/10 text-cyan-100 text-xs">
-          <Sparkles size={13} /> FE CBT Practice
+          <Sparkles size={13} /> {exam.shortName} CBT Practice
         </p>
         <h1 className="text-4xl md:text-6xl font-black tracking-tight">Exam Quest</h1>
         <p className="max-w-2xl mx-auto text-slate-300 text-sm md:text-base leading-relaxed">
-          出題は毎回ランダム。短時間で繰り返し解いて、基本情報試験の得点感覚を育てる学習モードです。
+          出題は毎回ランダム。短時間で繰り返し解いて、{exam.fullName}の得点感覚を育てる学習モードです。
         </p>
         <button onClick={onStart} className="btn-primary max-w-sm mx-auto py-3.5">
           学習を開始する <ChevronRight size={18} />

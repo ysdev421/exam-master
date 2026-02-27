@@ -1,0 +1,15 @@
+﻿{
+  "name": "ExamQuest",
+  "short_name": "ExamQuest",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
